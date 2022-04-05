@@ -51,8 +51,8 @@ public class AccountService {
     public static final String CREATE_ACCOUNT = "INSERT INTO " + TABLE_ACCOUNT + '(' + COLUMN_ACCOUNT_NAME + ", " +
             COLUMN_ACCOUNT_INITIAL_BALANCE + ", " + COLUMN_ACCOUNT_USER_ID + ", " + COLUMN_ACCOUNT_CREATED_AT + ") VALUES (?, ?, ?, ?)";
 
-    public static final String DELETE_ACCOUNT = "DELETE FROM " + TABLE_ACCOUNT + " WHERE " + COLUMN_ACCOUNT_USER_ID + " = ? "
-           ;
+    public static final String DELETE_ACCOUNT = "DELETE FROM " + TABLE_ACCOUNT + " WHERE " + COLUMN_ACCOUNT_USER_ID + " = ? AND " +
+            COLUMN_ACCOUNT_ID + " = ? ";
 
     public static final String UPDATE_ACCOUNT = "UPDATE " + TABLE_ACCOUNT + " SET " + COLUMN_ACCOUNT_NAME + " =?, " +
             COLUMN_ACCOUNT_INITIAL_BALANCE + " =?, " + COLUMN_ACCOUNT_USER_ID + " =?, " + COLUMN_ACCOUNT_CREATED_AT +
@@ -239,6 +239,7 @@ public class AccountService {
         if (open()) {
 
             deleteAccount.setLong(1, idAccount);
+            deleteAccount.setLong(2, accountId);
 
             int affectedRows = deleteAccount.executeUpdate();
 
