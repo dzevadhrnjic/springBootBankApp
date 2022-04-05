@@ -238,7 +238,6 @@ public class AccountService {
 
         if (open()) {
 
-//            deleteAccount.setLong(2, accountId);
             deleteAccount.setLong(1, idAccount);
 
             int affectedRows = deleteAccount.executeUpdate();
