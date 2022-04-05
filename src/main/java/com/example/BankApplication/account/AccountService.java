@@ -51,7 +51,8 @@ public class AccountService {
     public static final String CREATE_ACCOUNT = "INSERT INTO " + TABLE_ACCOUNT + '(' + COLUMN_ACCOUNT_NAME + ", " +
             COLUMN_ACCOUNT_INITIAL_BALANCE + ", " + COLUMN_ACCOUNT_USER_ID + ", " + COLUMN_ACCOUNT_CREATED_AT + ") VALUES (?, ?, ?, ?)";
 
-    public static final String DELETE_ACCOUNT = "DELETE FROM " + TABLE_ACCOUNT + " WHERE " + COLUMN_ACCOUNT_ID + " = ? ";
+    public static final String DELETE_ACCOUNT = "DELETE FROM " + TABLE_ACCOUNT + " WHERE " + COLUMN_ACCOUNT_USER_ID + " = ? "
+           ;
 
     public static final String UPDATE_ACCOUNT = "UPDATE " + TABLE_ACCOUNT + " SET " + COLUMN_ACCOUNT_NAME + " =?, " +
             COLUMN_ACCOUNT_INITIAL_BALANCE + " =?, " + COLUMN_ACCOUNT_USER_ID + " =?, " + COLUMN_ACCOUNT_CREATED_AT +
@@ -177,7 +178,7 @@ public class AccountService {
                 accountById.setLong(1, accountId);
                 ResultSet results = accountById.executeQuery();
                 if (!results.isBeforeFirst())
-                    throw new ValidationIdAccountException("Can't find the id");
+                    throw new ValidationIdAccountException("Couldn't find the id");
 
                 Account account = new Account();
 
@@ -230,26 +231,26 @@ public class AccountService {
             return account;
     }
 
-    public void deleteAccount(Long accountId)throws SQLException{
+    public void deleteAccount(String token, Long accountId)throws SQLException {
 
         listAccountById(accountId);
+        Long idAccount = tokenUtil.verifyJwt(token);
 
         if (open()) {
 
-            deleteAccount.setLong(1, accountId);
+//            deleteAccount.setLong(2, accountId);
+            deleteAccount.setLong(1, idAccount);
 
             int affectedRows = deleteAccount.executeUpdate();
 
-            if (affectedRows != 1) {
-                System.out.println("Couldn't delete account");
+            if (affectedRows != 0) {
+                System.out.println("Account deleted");
+            } else {
+                throw new InvalidTokenException("Unauthorized user");
             }
-        }else {
-            throw new SQLException("Couldn't get the id");
+            close();
         }
-
-        close();
     }
-
     public Account updateAccount(String token, Long accountId, Account account) throws SQLException{
 
         listAccountById(accountId);

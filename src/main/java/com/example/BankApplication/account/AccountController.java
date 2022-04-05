@@ -66,12 +66,15 @@ public class AccountController {
     }
 
     @DeleteMapping(path = "{accountId}")
-    public ResponseEntity<Object> deleteAccount(@PathVariable("accountId") Long accountId) throws SQLException{
+    public ResponseEntity<Object> deleteAccount(@RequestHeader(value = "Authorization") String token,
+            @PathVariable("accountId") Long accountId) throws SQLException{
         try {
-            accountService.deleteAccount(accountId);
+            accountService.deleteAccount(token, accountId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(accountId);
         }catch (ValidationIdAccountException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }catch (InvalidTokenException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
