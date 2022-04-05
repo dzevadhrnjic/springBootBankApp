@@ -232,8 +232,7 @@ public class UserService {
 
         listUserById(userId);
         UserValidationService.userFieldsValidation(user);
-        Long idUser = tokenUtil.verifyJwt(token);
-
+        Long idUser = tokenUtil.verifyJwt(token); //token
         if (open()) {
 
             updateUser.setString(1, user.getFirstname());
