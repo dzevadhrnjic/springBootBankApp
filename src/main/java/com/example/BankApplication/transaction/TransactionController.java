@@ -44,11 +44,12 @@ public class TransactionController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createTransaction(@RequestBody Transaction transaction, AmountService amountService, Long accountId) throws SQLException{
+    public ResponseEntity<Object> createTransaction(@RequestHeader(value = "Authorization") String token,
+                                                    @RequestBody Transaction transaction, AmountService amountService, Long accountId) throws SQLException{
         try {
-            Transaction createdTransaction = transactionService.createTransaction(transaction, amountService, accountId);
+            Transaction createdTransaction = transactionService.createTransaction(token,transaction, amountService, accountId);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdTransaction);
-        }catch (ValidationTransactionException e){
+        }catch (ValidationTransactionException | InvalidTokenException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }catch (ValidationIdAccountException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

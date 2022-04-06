@@ -1,6 +1,7 @@
 package com.example.BankApplication.transaction;
 
 import com.example.BankApplication.account.AccountService;
+import com.example.BankApplication.account.InvalidTokenException;
 import com.example.BankApplication.account.ValidationIdAccountException;
 import com.example.BankApplication.user.TokenUtil;
 import org.springframework.stereotype.Service;
@@ -27,12 +28,14 @@ public class TransactionService {
     public static final String COLUMN_TRANSACTION_DESTINATION_ACCOUNT = "destinationaccount";
     public static final String COLUMN_TRANSACTION_AMOUNT = "amount";
     public static final String COLUMN_TRANSACTION_CREATED_AT = "createdat";
+    public static final String COLUMN_TRANSACTION_USER_ID = "userid";
 
     public static final int INDEX_TRANSACTION_ID = 1;
     public static final int INDEX_TRANSACTION_SOURCE_ACCOUNT = 2;
     public static final int INDEX_TRANSACTION_DESTINATION_ACCOUNT = 3;
     public static final int INDEX_TRANSACTION_AMOUNT = 4;
     public static final int INDEX_TRANSACTION_CREATED_AT = 5;
+    public static final int INDEX_TRANSACTION_USER_ID = 6;
 
 //    public static final String TRANSACTIONS = "SELECT * FROM " + TABLE_TRANSACTION;
 
@@ -48,7 +51,7 @@ public class TransactionService {
 
     public static final String CREATE_TRANSACTION = "INSERT INTO " + TABLE_TRANSACTION + '(' + COLUMN_TRANSACTION_SOURCE_ACCOUNT
             + ", " + COLUMN_TRANSACTION_DESTINATION_ACCOUNT + ", " + COLUMN_TRANSACTION_AMOUNT + ", "
-            + COLUMN_TRANSACTION_CREATED_AT + ") VALUES ( ?, ?, ?, ?)";
+            + COLUMN_TRANSACTION_CREATED_AT + ", " + COLUMN_TRANSACTION_USER_ID + ") VALUES ( ?, ?, ?, ?, ?)";
 
     public static final String DELETE_TRANSACTION = "DELETE FROM " + TABLE_TRANSACTION + " WHERE " + COLUMN_TRANSACTION_ID
                             + " = ? ";
@@ -162,39 +165,44 @@ public class TransactionService {
         }throw new SQLException("Couldn't list transaction by id");
     }
 
-    public Transaction createTransaction(Transaction transaction, AmountService amountService, Long accountId)throws SQLException{
+    public Transaction createTransaction(String token, Transaction transaction, AmountService amountService, Long accountId)throws SQLException {
 
         TransactionValidationService.transactionFieldsValidation(transaction, transaction.getSourceaccount(), amountService);
+        Long userId = tokenUtil.verifyJwt(token);
         accountService.listAccountById(transaction.getSourceaccount());
         accountService.listAccountById(transaction.getDestinationaccount());
 
-        if (open()){
+        if (open()) {
 
-            createTransaction.setLong(1, transaction.getSourceaccount());
-            createTransaction.setLong(2, transaction.getDestinationaccount());
-            createTransaction.setDouble(3, transaction.getAmount());
-            LocalDate localDate = LocalDate.now();
-            createTransaction.setDate(4, Date.valueOf(localDate));
+                createTransaction.setLong(1, transaction.getSourceaccount());
+                createTransaction.setLong(2, transaction.getDestinationaccount());
+                createTransaction.setDouble(3, transaction.getAmount());
+                LocalDate localDate = LocalDate.now();
+                createTransaction.setDate(4, Date.valueOf(localDate));
+                createTransaction.setLong(5, userId);
 
-            int affectedRows = createTransaction.executeUpdate();
+                int affectedRows = createTransaction.executeUpdate();
 
-            if (affectedRows != 1){
-                System.out.println("Couldn't create transaction");
+                if (affectedRows > 0) {
+                    System.out.println("Created Transaction");
+                } else {
+                    throw new InvalidTokenException("No user with that id");
+                }
+
+                ResultSet generatedKeys = createTransaction.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    transaction.setId(generatedKeys.getLong(1));
+                    transaction.setSourceaccount(generatedKeys.getLong(2));
+                    transaction.setDestinationaccount(generatedKeys.getLong(3));
+                    transaction.setAmount(generatedKeys.getDouble(4));
+                    transaction.setCreatedat(generatedKeys.getDate(5));
+                    transaction.setUserid(generatedKeys.getLong(6));
+                } else {
+                    throw new InvalidTokenException("Couldn't get the id");
+                }
             }
-
-            ResultSet generatedKeys = createTransaction.getGeneratedKeys();
-            if (generatedKeys.next()){
-                transaction.setId(generatedKeys.getLong(1));
-                transaction.setSourceaccount(generatedKeys.getLong(2));
-                transaction.setDestinationaccount(generatedKeys.getLong(3));
-                transaction.setAmount(generatedKeys.getDouble(4));
-                transaction.setCreatedat(generatedKeys.getDate(5));
-            }else {
-                throw new SQLException("Couldn't get the id");
-            }
-        }
-        close();
-        return transaction;
+            close();
+            return transaction;
     }
 
     public Transaction deleteTransaction(Long transactionId)throws SQLException{

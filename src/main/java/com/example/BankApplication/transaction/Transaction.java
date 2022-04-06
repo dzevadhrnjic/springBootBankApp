@@ -9,6 +9,7 @@ public class Transaction {
     private Long destinationaccount;
     private Double amount;
     private Date createdat;
+    private Long userid;
 
     public Transaction() {
     }
@@ -51,5 +52,13 @@ public class Transaction {
 
     public void setCreatedat(Date createdat) {
         this.createdat = createdat;
+    }
+
+    public Long getUserid() {
+        return userid;
+    }
+
+    public void setUserid(Long userid) {
+        this.userid = userid;
     }
 }
