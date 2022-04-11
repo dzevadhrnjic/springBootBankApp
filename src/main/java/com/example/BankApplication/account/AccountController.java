@@ -42,11 +42,25 @@ public class AccountController {
         }
     }
 
-    @GetMapping(path = "{accountId}/{balance}")
+//    @GetMapping(path = "{accountId}/{balance}")
+//    public Double accountIncome(@RequestHeader(value = "Authorization") String token,
+//                                @PathVariable("accountId") Long accountId) throws SQLException{
+//        return amountService.accountOutcome(token,accountId);
+//    }
+
+//    @GetMapping(path = "{accountId}/{balance}")
+//    public Double accountOutcome(@RequestHeader(value = "Authorization")String token,
+//                                 @PathVariable("accountId") Long accountId)throws SQLException{
+//        return amountService.accountOutcome(token,accountId);
+//    }
+
+    @GetMapping(path = "{accountId}/{idAccount}/{balance}")
     public ResponseEntity<Object> balance(@RequestHeader(value = "Authorization") String token,
-                                          @PathVariable("accountId") Long accountId)throws SQLException{
+                                          @RequestHeader(value = "Authorization1") String token1,
+                                          @PathVariable("accountId") Long accountId,
+                                          @PathVariable(value = "idAccount") Long idAccount)throws SQLException{
         try {
-            Balance balanceOfAccounts = amountService.balance(token,accountId);
+            Balance balanceOfAccounts = amountService.balance(token, token1, accountId, idAccount);
             return ResponseEntity.status(HttpStatus.OK).body(balanceOfAccounts);
         }catch (ValidationIdAccountException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

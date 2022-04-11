@@ -1,6 +1,7 @@
 package com.example.BankApplication.transaction;
 
 import com.example.BankApplication.account.AccountService;
+import com.example.BankApplication.user.TokenUtil;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
@@ -10,6 +11,7 @@ import java.sql.*;
 public class AmountService {
 
     AccountService accountService = new AccountService();
+    TokenUtil tokenUtil = new TokenUtil();
 
     public static final String URL = "jdbc:postgresql://localhost:5432/bank";
 
@@ -19,15 +21,16 @@ public class AmountService {
     public static final String COLUMN_TRANSACTION_DESTINATION_ACCOUNT = "destinationaccount";
     public static final String COLUMN_TRANSACTION_AMOUNT = "amount";
     public static final String COLUMN_TRANSACTION_CREATED_AT = "createdat";
+    public static final String COLUMN_TRANSACTION_USER_ID = "userid";
     public static final String COLUMN_BALANCE = "balance";
 
     public static final int INDEX_AMOUNT = 1;
 
     public static final String AMOUNT_SOURCE_ACCOUNT = " SELECT SUM(amount) AS balance FROM " + TABLE_TRANSACTION +
-                                " WHERE " + COLUMN_TRANSACTION_SOURCE_ACCOUNT + " = ? ";
+                                " WHERE " + COLUMN_TRANSACTION_USER_ID + " = ?";
 
-    public static final String AMOUNT_DESTINATION_ACCOUNT = " SELECT SUM(amount) AS " + COLUMN_BALANCE + " FROM " + TABLE_TRANSACTION
-                                + " WHERE " + COLUMN_TRANSACTION_DESTINATION_ACCOUNT + " = ? ";
+    public static final String AMOUNT_DESTINATION_ACCOUNT = " SELECT SUM(amount) AS balance FROM " + TABLE_TRANSACTION
+                                + " WHERE " + COLUMN_TRANSACTION_USER_ID + " = ? ";
     private Connection connection;
     public PreparedStatement amountSourceAccount;
     public PreparedStatement amountDestinationAccount;
@@ -62,11 +65,13 @@ public class AmountService {
 
     public Double accountIncome(String token, Long accountId)throws SQLException {
 
-        accountService.listAccountById(token,accountId);
+        accountService.listAccountById(token, accountId);
+        Long idAccount = tokenUtil.verifyJwt(token);
 
         if (open()) {
 
-            amountSourceAccount.setLong(1, accountId);
+//            amountSourceAccount.setLong(1, accountId);
+            amountSourceAccount.setLong(1, idAccount);
 
             ResultSet results = amountSourceAccount.executeQuery();
 
@@ -83,10 +88,12 @@ public class AmountService {
     public Double accountOutcome(String token, Long accountId) throws SQLException{
 
         accountService.listAccountById(token,accountId);
+        Long idAccount = tokenUtil.verifyJwt(token);
 
         if (open()){
 
-            amountDestinationAccount.setLong(1, accountId);
+            amountDestinationAccount.setLong(1, idAccount);
+//            amountDestinationAccount.setLong(2, accountId);
 
             ResultSet results = amountDestinationAccount.executeQuery();
 
@@ -99,16 +106,18 @@ public class AmountService {
         throw new SQLException("Couldn't sum destinationAccount");
     }
 
-    public Balance balance(String token, Long accountId) throws SQLException{
+    public Balance balance(String token, String token1, Long accountId, Long idAccount) throws SQLException{
 
+        Long idAccount1 = tokenUtil.verifyJwt(token);
         accountService.listAccountById(token,accountId);
+        accountService.listAccountById(token1,idAccount);
 
         if (open()) {
 
             Balance balance = new Balance();
 
             Double sourceAccount = accountIncome(token,accountId);
-            Double destinationAccount = accountOutcome(token,accountId);
+            Double destinationAccount = accountOutcome(token1,idAccount);
 
             Double result = sourceAccount - destinationAccount;
 
