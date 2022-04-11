@@ -46,6 +46,10 @@ public class TransactionService {
             + COLUMN_TRANSACTION_AMOUNT + ", " + COLUMN_TRANSACTION_CREATED_AT + " FROM " + TABLE_TRANSACTION + " WHERE "
             + COLUMN_TRANSACTION_ID + " = ? ";
 
+    public static final String TRANSACTION_BY_USER_ID = "SELECT " + COLUMN_TRANSACTION_ID + ", " + COLUMN_TRANSACTION_SOURCE_ACCOUNT +
+            ", " + COLUMN_TRANSACTION_DESTINATION_ACCOUNT + ", " + COLUMN_TRANSACTION_AMOUNT + ", " + COLUMN_TRANSACTION_CREATED_AT +
+            ", " + COLUMN_TRANSACTION_USER_ID + " FROM " + TABLE_TRANSACTION  + " WHERE " + COLUMN_TRANSACTION_USER_ID + " = ? ";
+
     public static final String CREATE_TRANSACTION = "INSERT INTO " + TABLE_TRANSACTION + '(' + COLUMN_TRANSACTION_SOURCE_ACCOUNT
             + ", " + COLUMN_TRANSACTION_DESTINATION_ACCOUNT + ", " + COLUMN_TRANSACTION_AMOUNT + ", "
             + COLUMN_TRANSACTION_CREATED_AT + ", " + COLUMN_TRANSACTION_USER_ID +  ") VALUES ( ?, ?, ?, ?, ?)";
@@ -60,6 +64,7 @@ public class TransactionService {
     private Connection connection;
     private PreparedStatement transactions;
     private PreparedStatement transactionById;
+    private PreparedStatement transactionByUserId;
     private PreparedStatement createTransaction;
     private PreparedStatement deleteTransaction;
     private PreparedStatement updateTransaction;
@@ -69,6 +74,7 @@ public class TransactionService {
             connection = DriverManager.getConnection(URL, "postgres", "kovilica1234");
             transactions = connection.prepareStatement(TRANSACTIONS);
             transactionById = connection.prepareStatement(TRANSACTION_BY_ID);
+            transactionByUserId = connection.prepareStatement(TRANSACTION_BY_USER_ID);
             createTransaction = connection.prepareStatement(CREATE_TRANSACTION, Statement.RETURN_GENERATED_KEYS);
             deleteTransaction = connection.prepareStatement(DELETE_TRANSACTION);
             updateTransaction = connection.prepareStatement(UPDATE_TRANSACTION);
@@ -87,6 +93,9 @@ public class TransactionService {
             if (transactionById != null){
                 transactionById.close();
             }
+            if (transactionByUserId != null){
+                transactionByUserId.close();
+            }
             if (createTransaction != null){
                 createTransaction.close();
             }
@@ -104,39 +113,35 @@ public class TransactionService {
         }
     }
 
-    public List<Transaction> listTransactions() throws SQLException{
+    public List<Transaction> listTransactionByUserId(String token)throws SQLException{
 
-        if (open()) {
+        Long userId = tokenUtil.verifyJwt(token);
 
-            StringBuilder stringBuilder = new StringBuilder("SELECT * FROM ");
-            stringBuilder.append(TABLE_TRANSACTION);
+        if (open()){
 
-            try (Statement statement = connection.createStatement();
-                 ResultSet results = statement.executeQuery(stringBuilder.toString())) {
+            transactionByUserId.setLong(1, userId);
+            ResultSet results = transactionByUserId.executeQuery();
 
-                if (!results.next())
-                    throw new TransactionIdValidation("No transaction with that id");
+            if (!results.isBeforeFirst())
+                throw new InvalidTokenException("Couldn't find id");
 
-                List<Transaction> transactions = new ArrayList<>();
+            List<Transaction> transactions = new ArrayList<>();
 
-                while (results.next()) {
-                    Transaction transaction = new Transaction();
-                    transaction.setId(results.getLong(INDEX_TRANSACTION_ID));
-                    transaction.setSourceaccount(results.getLong(INDEX_TRANSACTION_SOURCE_ACCOUNT));
-                    transaction.setDestinationaccount(results.getLong(INDEX_TRANSACTION_DESTINATION_ACCOUNT));
-                    transaction.setAmount(results.getDouble(INDEX_TRANSACTION_AMOUNT));
-                    transaction.setCreatedat(results.getDate(INDEX_TRANSACTION_CREATED_AT));
-                    transaction.setUserid(results.getLong(INDEX_TRANSACTION_USER_ID));
-                    transactions.add(transaction);
-                }
-                close();
-                return transactions;
-            }catch (SQLException e){
-                e.printStackTrace();
+            while (results.next()){
+                Transaction transaction = new Transaction();
+                transaction.setId(results.getLong(INDEX_TRANSACTION_ID));
+                transaction.setSourceaccount(results.getLong(INDEX_TRANSACTION_SOURCE_ACCOUNT));
+                transaction.setDestinationaccount(results.getLong(INDEX_TRANSACTION_DESTINATION_ACCOUNT));
+                transaction.setAmount(results.getDouble(INDEX_TRANSACTION_AMOUNT));
+                transaction.setCreatedat(results.getDate(INDEX_TRANSACTION_CREATED_AT));
+                transaction.setUserid(results.getLong(INDEX_TRANSACTION_USER_ID));
+                transactions.add(transaction);
             }
-        }
-        return null;
+            close();
+            return transactions;
+        }throw new SQLException("Couldn't list transaction by userId");
     }
+
 
     public Transaction listTransactionById(Long transactionId) throws SQLException{
 

@@ -20,7 +20,7 @@ public class AccountController {
     private AmountService amountService = new AmountService();
 
     @GetMapping
-    public ResponseEntity<Object> listAccountsUserId(@RequestHeader(value = "Authorization") String token) throws SQLException {
+    public ResponseEntity<Object> listAccountsByUserId(@RequestHeader(value = "Authorization") String token) throws SQLException {
         try {
             List<Account> listAccounts = accountService.listAccountByUserId(token);
             return ResponseEntity.status(HttpStatus.OK).body(listAccounts);
@@ -41,17 +41,6 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-//
-//    @GetMapping(path = "{accountId}/{balance}")
-//    public Double accountIncome(@RequestHeader(value = "Authorization") String token,
-//                                @PathVariable("accountId") Long accountId) throws SQLException{
-//        return amountService.accountOutcome(accountId);
-//    }
-
-//    @GetMapping(path = "{accountId}/{balance}")
-//    public Double accountOutcome(@PathVariable("accountId") Long accountId)throws SQLException{
-//        return amountService.accountOutcome(accountId);
-//    }
 
     @GetMapping(path = "{accountId}/{balance}")
     public ResponseEntity<Object> balance(@RequestHeader(value = "Authorization") String token,

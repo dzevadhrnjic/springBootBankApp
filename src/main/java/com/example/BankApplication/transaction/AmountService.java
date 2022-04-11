@@ -102,7 +102,7 @@ public class AmountService {
     public Balance balance(String token, Long accountId) throws SQLException{
 
         accountService.listAccountById(token, accountId);
-        
+
         if (open()) {
 
             Balance balance = new Balance();

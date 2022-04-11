@@ -22,17 +22,16 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> listTransactions() throws SQLException {
+    public ResponseEntity<Object> listAccountByUserId(@RequestHeader(value = "Authorization") String token) throws SQLException{
         try {
-            List<Transaction> listTransactionsById = transactionService.listTransactions();
-            return ResponseEntity.status(HttpStatus.OK).body(listTransactionsById);
+            List<Transaction> listTransaction = transactionService.listTransactionByUserId(token);
+            return ResponseEntity.status(HttpStatus.OK).body(listTransaction);
         }catch (InvalidTokenException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }catch (TransactionIdValidation e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }catch (ValidationIdAccountException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
     @GetMapping(path = "{transactionId}")
     public ResponseEntity<Object> listTransactionById(@PathVariable("transactionId") Long transactionId) throws SQLException {
         try {
