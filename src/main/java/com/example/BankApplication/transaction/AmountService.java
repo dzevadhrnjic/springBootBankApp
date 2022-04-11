@@ -27,10 +27,10 @@ public class AmountService {
     public static final int INDEX_AMOUNT = 1;
 
     public static final String AMOUNT_SOURCE_ACCOUNT = " SELECT SUM(amount) AS balance FROM " + TABLE_TRANSACTION +
-                                " WHERE " + COLUMN_TRANSACTION_USER_ID + " = ?";
+                                " WHERE " + COLUMN_TRANSACTION_SOURCE_ACCOUNT + " = ? ";
 
     public static final String AMOUNT_DESTINATION_ACCOUNT = " SELECT SUM(amount) AS balance FROM " + TABLE_TRANSACTION
-                                + " WHERE " + COLUMN_TRANSACTION_USER_ID + " = ? ";
+                                + " WHERE " + COLUMN_TRANSACTION_DESTINATION_ACCOUNT + " = ? ";
     private Connection connection;
     public PreparedStatement amountSourceAccount;
     public PreparedStatement amountDestinationAccount;
@@ -70,8 +70,7 @@ public class AmountService {
 
         if (open()) {
 
-//            amountSourceAccount.setLong(1, accountId);
-            amountSourceAccount.setLong(1, idAccount);
+            amountSourceAccount.setLong(1, accountId);
 
             ResultSet results = amountSourceAccount.executeQuery();
 
@@ -85,15 +84,11 @@ public class AmountService {
         }
 
 
-    public Double accountOutcome(String token, Long accountId) throws SQLException{
-
-        accountService.listAccountById(token,accountId);
-        Long idAccount = tokenUtil.verifyJwt(token);
+    public Double accountOutcome(Long accountId) throws SQLException{
 
         if (open()){
 
-            amountDestinationAccount.setLong(1, idAccount);
-//            amountDestinationAccount.setLong(2, accountId);
+            amountDestinationAccount.setLong(1, accountId);
 
             ResultSet results = amountDestinationAccount.executeQuery();
 
@@ -106,18 +101,16 @@ public class AmountService {
         throw new SQLException("Couldn't sum destinationAccount");
     }
 
-    public Balance balance(String token, String token1, Long accountId, Long idAccount) throws SQLException{
+    public Balance balance(String token, Long accountId) throws SQLException{
 
-        Long idAccount1 = tokenUtil.verifyJwt(token);
         accountService.listAccountById(token,accountId);
-        accountService.listAccountById(token1,idAccount);
 
         if (open()) {
 
             Balance balance = new Balance();
 
             Double sourceAccount = accountIncome(token,accountId);
-            Double destinationAccount = accountOutcome(token1,idAccount);
+            Double destinationAccount = accountOutcome(accountId);
 
             Double result = sourceAccount - destinationAccount;
 

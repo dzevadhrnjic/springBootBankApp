@@ -6,11 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class TokenUtil {
-
-    public static void main(String[] args) {
-//        System.out.println(jwt(80L));
-//        System.out.println(verifyJwt("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI4MCIsImlzcyI6ImF1dGgwIn0.I1tY_n9Ozo1iege1YZhsSyHtNaqPO-_4hIp9NFDTaFXNdPaBFgsw7dNLQ3RdV5gkw7CA4X4QOweZ9WLWrH-1bA"));
-    }
+    
     public  String jwt(Long userId) {
 
         Algorithm algorithm = Algorithm.HMAC512("secret");
