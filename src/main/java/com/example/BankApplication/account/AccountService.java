@@ -137,7 +137,7 @@ public class AccountService {
         return null;
     }
 
-    public List<Account> listAccountByUserId(String token)throws SQLException {
+    public List<Account> listAccountsByUserId(String token)throws SQLException {
 
         Long userId = tokenUtil.verifyJwt(token);
 

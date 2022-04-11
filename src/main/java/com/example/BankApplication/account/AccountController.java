@@ -20,9 +20,9 @@ public class AccountController {
     private AmountService amountService = new AmountService();
 
     @GetMapping
-    public ResponseEntity<Object> listAccountsByUserId(@RequestHeader(value = "Authorization") String token) throws SQLException {
+    public ResponseEntity<Object> listAccountByUserId(@RequestHeader(value = "Authorization") String token) throws SQLException {
         try {
-            List<Account> listAccounts = accountService.listAccountByUserId(token);
+            List<Account> listAccounts = accountService.listAccountsByUserId(token);
             return ResponseEntity.status(HttpStatus.OK).body(listAccounts);
         }catch (InvalidTokenException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

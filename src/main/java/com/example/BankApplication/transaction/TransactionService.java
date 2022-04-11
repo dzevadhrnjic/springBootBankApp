@@ -17,7 +17,6 @@ public class TransactionService {
     TokenUtil tokenUtil = new TokenUtil();
 
     public static AccountService accountService = new AccountService();
-    public static AmountService amountService = new AmountService();
 
     public static final String URL = "jdbc:postgresql://localhost:5432/bank";
 
@@ -35,11 +34,6 @@ public class TransactionService {
     public static final int INDEX_TRANSACTION_AMOUNT = 4;
     public static final int INDEX_TRANSACTION_CREATED_AT = 5;
     public static final int INDEX_TRANSACTION_USER_ID = 6;
-
-    public static final String TRANSACTIONS = "SELECT " + COLUMN_TRANSACTION_ID + ", "
-            + COLUMN_TRANSACTION_SOURCE_ACCOUNT + ", " + COLUMN_TRANSACTION_DESTINATION_ACCOUNT + ", "
-            + COLUMN_TRANSACTION_AMOUNT + ", " + COLUMN_TRANSACTION_CREATED_AT + " FROM " + TABLE_TRANSACTION + " WHERE "
-            + COLUMN_TRANSACTION_ID + " = ? ";
 
     public static final String TRANSACTION_BY_ID = "SELECT " + COLUMN_TRANSACTION_ID + ", "
             + COLUMN_TRANSACTION_SOURCE_ACCOUNT + ", " + COLUMN_TRANSACTION_DESTINATION_ACCOUNT + ", "
@@ -62,7 +56,6 @@ public class TransactionService {
             COLUMN_TRANSACTION_CREATED_AT + " =? " + " WHERE " + COLUMN_TRANSACTION_ID + " =? ";
 
     private Connection connection;
-    private PreparedStatement transactions;
     private PreparedStatement transactionById;
     private PreparedStatement transactionByUserId;
     private PreparedStatement createTransaction;
@@ -72,7 +65,6 @@ public class TransactionService {
     public boolean open(){
         try {
             connection = DriverManager.getConnection(URL, "postgres", "kovilica1234");
-            transactions = connection.prepareStatement(TRANSACTIONS);
             transactionById = connection.prepareStatement(TRANSACTION_BY_ID);
             transactionByUserId = connection.prepareStatement(TRANSACTION_BY_USER_ID);
             createTransaction = connection.prepareStatement(CREATE_TRANSACTION, Statement.RETURN_GENERATED_KEYS);
@@ -87,9 +79,6 @@ public class TransactionService {
 
     public void close(){
         try {
-            if (transactions != null){
-                transactions.close();
-            }
             if (transactionById != null){
                 transactionById.close();
             }
@@ -113,7 +102,7 @@ public class TransactionService {
         }
     }
 
-    public List<Transaction> listTransactionByUserId(String token)throws SQLException{
+    public List<Transaction> listTransactionsByUserId(String token)throws SQLException{
 
         Long userId = tokenUtil.verifyJwt(token);
 
@@ -170,7 +159,8 @@ public class TransactionService {
     public Transaction createTransaction(String token, String token1,Transaction transaction, AmountService amountService) throws SQLException {
 
         Long userId1 = tokenUtil.verifyJwt(token);
-        TransactionValidationService.transactionFieldsValidation( token,transaction,transaction.getSourceaccount(), amountService);
+        TransactionValidationService.transactionFieldsValidation( token,transaction,
+                                transaction.getSourceaccount(), amountService);
         accountService.listAccountById(token,transaction.getSourceaccount());
         accountService.listAccountById(token1,transaction.getDestinationaccount());
 

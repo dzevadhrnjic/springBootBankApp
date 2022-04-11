@@ -24,7 +24,7 @@ public class TransactionController {
     @GetMapping
     public ResponseEntity<Object> listAccountByUserId(@RequestHeader(value = "Authorization") String token) throws SQLException{
         try {
-            List<Transaction> listTransaction = transactionService.listTransactionByUserId(token);
+            List<Transaction> listTransaction = transactionService.listTransactionsByUserId(token);
             return ResponseEntity.status(HttpStatus.OK).body(listTransaction);
         }catch (InvalidTokenException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
