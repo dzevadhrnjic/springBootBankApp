@@ -23,7 +23,7 @@ public class TransactionValidationService {
     }
 
     public static void sourceAccountValidation(String token,Long accountId, Transaction transaction, AmountService amountService) throws SQLException {
-        if (amountService.accountIncome(token,accountId) < transaction.getAmount()){
+        if (amountService.accountIncome(accountId) < transaction.getAmount()){
             throw new ValidationTransactionException("You don't have that amount on your account");
         }
     }

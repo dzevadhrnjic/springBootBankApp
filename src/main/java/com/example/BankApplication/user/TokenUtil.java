@@ -6,7 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class TokenUtil {
-    
+
     public  String jwt(Long userId) {
 
         Algorithm algorithm = Algorithm.HMAC512("secret");

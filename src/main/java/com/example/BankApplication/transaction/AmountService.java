@@ -63,10 +63,7 @@ public class AmountService {
         }
     }
 
-    public Double accountIncome(String token, Long accountId)throws SQLException {
-
-        accountService.listAccountById(token, accountId);
-        Long idAccount = tokenUtil.verifyJwt(token);
+    public Double accountIncome(Long accountId)throws SQLException {
 
         if (open()) {
 
@@ -86,6 +83,7 @@ public class AmountService {
 
     public Double accountOutcome(Long accountId) throws SQLException{
 
+
         if (open()){
 
             amountDestinationAccount.setLong(1, accountId);
@@ -103,13 +101,11 @@ public class AmountService {
 
     public Balance balance(String token, Long accountId) throws SQLException{
 
-        accountService.listAccountById(token,accountId);
-
         if (open()) {
 
             Balance balance = new Balance();
 
-            Double sourceAccount = accountIncome(token,accountId);
+            Double sourceAccount = accountIncome(accountId);
             Double destinationAccount = accountOutcome(accountId);
 
             Double result = sourceAccount - destinationAccount;
