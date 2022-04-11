@@ -1,8 +1,6 @@
 package com.example.BankApplication.account;
 
-import com.example.BankApplication.user.LoginService;
 import com.example.BankApplication.user.TokenUtil;
-import com.example.BankApplication.user.User;
 import com.example.BankApplication.user.UserService;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +13,8 @@ import java.util.List;
 
 public class AccountService {
 
-
     UserService userService = new UserService();
-    LoginService loginService = new LoginService();
     TokenUtil tokenUtil = new TokenUtil();
-    User user = new User();
 
     public static final String URL = "jdbc:postgresql://localhost:5432/bank";
 
@@ -41,7 +36,7 @@ public class AccountService {
 
     public static final String ACCOUNT_BY_ID = "SELECT " + COLUMN_ACCOUNT_ID + ", " + COLUMN_ACCOUNT_NAME + ", " +
             COLUMN_ACCOUNT_INITIAL_BALANCE + ", " + COLUMN_ACCOUNT_USER_ID + ", " + COLUMN_ACCOUNT_CREATED_AT +
-            " FROM " + TABLE_ACCOUNT + " WHERE " + COLUMN_ACCOUNT_ID + " = ? ";
+            " FROM " + TABLE_ACCOUNT + " WHERE " + COLUMN_ACCOUNT_USER_ID + " = ? AND " + COLUMN_ACCOUNT_ID + " = ? ";
 
     public static final String ACCOUNTS_BY_USER_ID = "SELECT " + COLUMN_ACCOUNT_ID + ", " + COLUMN_ACCOUNT_NAME +
             " , " + COLUMN_ACCOUNT_INITIAL_BALANCE + ", " + COLUMN_ACCOUNT_USER_ID + ", " +
@@ -171,23 +166,28 @@ public class AccountService {
         throw new ValidationIdAccountException("Can't find the id");
     }
 
-        public Account listAccountById (Long accountId) throws SQLException {
+        public Account listAccountById(String token, Long accountId) throws SQLException {
 
-            if (open()) {
+                Long userId = tokenUtil.verifyJwt(token);
 
-                accountById.setLong(1, accountId);
-                ResultSet results = accountById.executeQuery();
-                if (!results.isBeforeFirst())
+                if (open()) {
+
+                    accountById.setLong(1,userId);
+                    accountById.setLong(2, accountId);
+
+                    ResultSet results = accountById.executeQuery();
+
+                    if (!results.isBeforeFirst())
                     throw new ValidationIdAccountException("Couldn't find the id");
 
-                Account account = new Account();
+                    Account account = new Account();
 
-                while (results.next()) {
-                    account.setId(results.getLong(INDEX_ACCOUNT_ID));
-                    account.setName(results.getString(INDEX_ACCOUNT_NAME));
-                    account.setInitialbalance(results.getDouble(INDEX_ACCOUNT_INITIAL_BALANCE));
-                    account.setUserid(results.getLong(INDEX_ACCOUNT_USER_ID));
-                    account.setCreatedat(results.getDate(INDEX_CREATED_AT));
+                    while (results.next()) {
+                        account.setId(results.getLong(INDEX_ACCOUNT_ID));
+                        account.setName(results.getString(INDEX_ACCOUNT_NAME));
+                        account.setInitialbalance(results.getDouble(INDEX_ACCOUNT_INITIAL_BALANCE));
+                        account.setUserid(results.getLong(INDEX_ACCOUNT_USER_ID));
+                        account.setCreatedat(results.getDate(INDEX_CREATED_AT));
                 }
                 close();
                 return account;
@@ -195,6 +195,7 @@ public class AccountService {
             }
             throw new SQLException("Couldn't list account by Id");
         }
+
 
     public Account createAccount(Account account) throws SQLException {
 
@@ -233,7 +234,7 @@ public class AccountService {
 
     public void deleteAccount(String token, Long accountId)throws SQLException {
 
-        listAccountById(accountId);
+        listAccountById(token,accountId);
         Long idAccount = tokenUtil.verifyJwt(token);
 
         if (open()) {
@@ -253,7 +254,7 @@ public class AccountService {
     }
     public Account updateAccount(String token, Long accountId, Account account) throws SQLException{
 
-        listAccountById(accountId);
+        listAccountById(token,accountId);
         AccountValidationService.accountFieldsValidation(account);
         userService.listUserById(account.getUserid());
         Long userId = tokenUtil.verifyJwt(token);

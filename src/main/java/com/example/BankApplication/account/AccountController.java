@@ -31,11 +31,11 @@ public class AccountController {
         }
     }
 
-
     @GetMapping(path = "{accountId}")
-    public ResponseEntity<Object> listAccountsById(@PathVariable("accountId") Long accountId) throws SQLException {
+    public ResponseEntity<Object> listAccountsById(@RequestHeader(value = "Authorization") String token,
+                                                   @PathVariable("accountId") Long accountId) throws SQLException {
         try {
-            Account listAccountId = accountService.listAccountById(accountId);
+            Account listAccountId = accountService.listAccountById(token,accountId);
             return ResponseEntity.status(HttpStatus.OK).body(listAccountId);
         }catch (ValidationIdAccountException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -43,15 +43,15 @@ public class AccountController {
     }
 
     @GetMapping(path = "{accountId}/{balance}")
-    public ResponseEntity<Object> balance(@PathVariable("accountId") Long accountId)throws SQLException{
+    public ResponseEntity<Object> balance(@RequestHeader(value = "Authorization") String token,
+                                          @PathVariable("accountId") Long accountId)throws SQLException{
         try {
-            Balance balanceOfAccounts = amountService.balance(accountId);
+            Balance balanceOfAccounts = amountService.balance(token,accountId);
             return ResponseEntity.status(HttpStatus.OK).body(balanceOfAccounts);
         }catch (ValidationIdAccountException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
 
     @PostMapping
     public ResponseEntity<Object> createAccount(@RequestBody Account account) throws SQLException {

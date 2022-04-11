@@ -60,9 +60,9 @@ public class AmountService {
         }
     }
 
-    public Double accountIncome(Long accountId)throws SQLException {
+    public Double accountIncome(String token, Long accountId)throws SQLException {
 
-        accountService.listAccountById(accountId);
+        accountService.listAccountById(token,accountId);
 
         if (open()) {
 
@@ -80,9 +80,9 @@ public class AmountService {
         }
 
 
-    public Double accountOutcome(Long accountId) throws SQLException{
+    public Double accountOutcome(String token, Long accountId) throws SQLException{
 
-        accountService.listAccountById(accountId);
+        accountService.listAccountById(token,accountId);
 
         if (open()){
 
@@ -99,16 +99,16 @@ public class AmountService {
         throw new SQLException("Couldn't sum destinationAccount");
     }
 
-    public Balance balance(Long accountId) throws SQLException{
+    public Balance balance(String token, Long accountId) throws SQLException{
 
-        accountService.listAccountById(accountId);
+        accountService.listAccountById(token,accountId);
 
         if (open()) {
 
             Balance balance = new Balance();
 
-            Double sourceAccount = accountIncome(accountId);
-            Double destinationAccount = accountOutcome(accountId);
+            Double sourceAccount = accountIncome(token,accountId);
+            Double destinationAccount = accountOutcome(token,accountId);
 
             Double result = sourceAccount - destinationAccount;
 

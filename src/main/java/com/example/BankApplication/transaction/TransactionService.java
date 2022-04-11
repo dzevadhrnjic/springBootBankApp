@@ -2,7 +2,6 @@ package com.example.BankApplication.transaction;
 
 import com.example.BankApplication.account.AccountService;
 import com.example.BankApplication.account.InvalidTokenException;
-import com.example.BankApplication.account.ValidationIdAccountException;
 import com.example.BankApplication.user.TokenUtil;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +36,6 @@ public class TransactionService {
     public static final int INDEX_TRANSACTION_CREATED_AT = 5;
     public static final int INDEX_TRANSACTION_USER_ID = 6;
 
-//    public static final String TRANSACTIONS = "SELECT * FROM " + TABLE_TRANSACTION;
-
     public static final String TRANSACTIONS = "SELECT " + COLUMN_TRANSACTION_ID + ", "
             + COLUMN_TRANSACTION_SOURCE_ACCOUNT + ", " + COLUMN_TRANSACTION_DESTINATION_ACCOUNT + ", "
             + COLUMN_TRANSACTION_AMOUNT + ", " + COLUMN_TRANSACTION_CREATED_AT + " FROM " + TABLE_TRANSACTION + " WHERE "
@@ -51,7 +48,7 @@ public class TransactionService {
 
     public static final String CREATE_TRANSACTION = "INSERT INTO " + TABLE_TRANSACTION + '(' + COLUMN_TRANSACTION_SOURCE_ACCOUNT
             + ", " + COLUMN_TRANSACTION_DESTINATION_ACCOUNT + ", " + COLUMN_TRANSACTION_AMOUNT + ", "
-            + COLUMN_TRANSACTION_CREATED_AT + ", " + COLUMN_TRANSACTION_USER_ID + ") VALUES ( ?, ?, ?, ?, ?)";
+            + COLUMN_TRANSACTION_CREATED_AT + ", " + COLUMN_TRANSACTION_USER_ID +  ") VALUES ( ?, ?, ?, ?, ?)";
 
     public static final String DELETE_TRANSACTION = "DELETE FROM " + TABLE_TRANSACTION + " WHERE " + COLUMN_TRANSACTION_ID
                             + " = ? ";
@@ -107,20 +104,15 @@ public class TransactionService {
         }
     }
 
-    public List<Transaction> listTransactions(String token) throws SQLException{
-
-        Long transactionId = tokenUtil.verifyJwt(token);
+    public List<Transaction> listTransactions() throws SQLException{
 
         if (open()) {
-//
-//            StringBuilder stringBuilder = new StringBuilder("SELECT * FROM ");
-//            stringBuilder.append(TABLE_TRANSACTION);
-//
-//            try (Statement statement = connection.createStatement();
-//                 ResultSet results = statement.executeQuery(stringBuilder.toString())) {
 
-                transactions.setLong(1, transactionId);
-                ResultSet results = transactions.executeQuery();
+            StringBuilder stringBuilder = new StringBuilder("SELECT * FROM ");
+            stringBuilder.append(TABLE_TRANSACTION);
+
+            try (Statement statement = connection.createStatement();
+                 ResultSet results = statement.executeQuery(stringBuilder.toString())) {
 
                 if (!results.next())
                     throw new TransactionIdValidation("No transaction with that id");
@@ -134,12 +126,16 @@ public class TransactionService {
                     transaction.setDestinationaccount(results.getLong(INDEX_TRANSACTION_DESTINATION_ACCOUNT));
                     transaction.setAmount(results.getDouble(INDEX_TRANSACTION_AMOUNT));
                     transaction.setCreatedat(results.getDate(INDEX_TRANSACTION_CREATED_AT));
+                    transaction.setUserid(results.getLong(INDEX_TRANSACTION_USER_ID));
                     transactions.add(transaction);
                 }
                 close();
                 return transactions;
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
         }
-        throw new ValidationIdAccountException("Couldn't find id");
+        return null;
     }
 
     public Transaction listTransactionById(Long transactionId) throws SQLException{
@@ -159,18 +155,20 @@ public class TransactionService {
                 transaction.setDestinationaccount(results.getLong(INDEX_TRANSACTION_DESTINATION_ACCOUNT));
                 transaction.setAmount(results.getDouble(INDEX_TRANSACTION_AMOUNT));
                 transaction.setCreatedat(results.getDate(INDEX_TRANSACTION_CREATED_AT));
+                transaction.setUserid(results.getLong(INDEX_TRANSACTION_USER_ID));
             }
             close();
             return transaction;
         }throw new SQLException("Couldn't list transaction by id");
     }
 
-    public Transaction createTransaction(String token, Transaction transaction, AmountService amountService, Long accountId)throws SQLException {
+    public Transaction createTransaction(String token, String token1,Transaction transaction, AmountService amountService) throws SQLException {
 
-        TransactionValidationService.transactionFieldsValidation(transaction, transaction.getSourceaccount(), amountService);
-        Long userId = tokenUtil.verifyJwt(token);
-        accountService.listAccountById(transaction.getSourceaccount());
-        accountService.listAccountById(transaction.getDestinationaccount());
+        Long userId1 = tokenUtil.verifyJwt(token);
+        TransactionValidationService.transactionFieldsValidation( token,transaction,transaction.getSourceaccount(), amountService);
+        accountService.listAccountById(token,transaction.getSourceaccount());
+        accountService.listAccountById(token1,transaction.getDestinationaccount());
+
 
         if (open()) {
 
@@ -179,9 +177,9 @@ public class TransactionService {
                 createTransaction.setDouble(3, transaction.getAmount());
                 LocalDate localDate = LocalDate.now();
                 createTransaction.setDate(4, Date.valueOf(localDate));
-                createTransaction.setLong(5, userId);
+                createTransaction.setLong(5, userId1);
 
-                int affectedRows = createTransaction.executeUpdate();
+            int affectedRows = createTransaction.executeUpdate();
 
                 if (affectedRows > 0) {
                     System.out.println("Created Transaction");
@@ -203,54 +201,6 @@ public class TransactionService {
             }
             close();
             return transaction;
-    }
-
-    public Transaction deleteTransaction(Long transactionId)throws SQLException{
-
-        listTransactionById(transactionId);
-
-        if (open()) {
-
-            deleteTransaction.setLong(1, transactionId);
-
-            int affectedRows = deleteTransaction.executeUpdate();
-
-            if (affectedRows != 1) {
-                System.out.println("Couldn't delete transaction");
-            }
-        }else {
-                throw new SQLException("Couldn't get the id");
-            }
-        close();
-        return null;
-    }
-
-    public Transaction updateTransaction(Long transactionId, Transaction transaction, Long accountId, AmountService amountService) throws SQLException{
-
-        accountService.listAccountById(transaction.getDestinationaccount());
-        accountService.listAccountById(transaction.getSourceaccount());
-        TransactionValidationService.transactionFieldsValidation(transaction, transaction.getSourceaccount(), amountService);
-        listTransactionById(transactionId);
-
-        if (open()){
-
-            updateTransaction.setLong(1, transaction.getSourceaccount());
-            updateTransaction.setLong(2, transaction.getDestinationaccount());
-            updateTransaction.setDouble(3, transaction.getAmount());
-            LocalDate localDate = LocalDate.now();
-            updateTransaction.setDate(4, Date.valueOf(localDate));
-            updateTransaction.setLong(5, transactionId);
-
-            int affectedRows = updateTransaction.executeUpdate();
-
-            if (affectedRows > 0){
-                System.out.println("Transaction was updated");
-            }else {
-                throw new SQLException("Couldn't get the id");
-            }
-        }
-        close();
-        return transaction;
     }
 }
 

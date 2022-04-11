@@ -22,9 +22,9 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> listTransactions(@RequestHeader(value = "Authorization") String token) throws SQLException {
+    public ResponseEntity<Object> listTransactions() throws SQLException {
         try {
-            List<Transaction> listTransactionsById = transactionService.listTransactions(token);
+            List<Transaction> listTransactionsById = transactionService.listTransactions();
             return ResponseEntity.status(HttpStatus.OK).body(listTransactionsById);
         }catch (InvalidTokenException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -45,36 +45,16 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<Object> createTransaction(@RequestHeader(value = "Authorization") String token,
-                                                    @RequestBody Transaction transaction, AmountService amountService, Long accountId) throws SQLException{
+                                                    @RequestHeader(value = "Authorization1") String token1,
+                                                    @RequestBody Transaction transaction,
+                                                    AmountService amountService) throws SQLException {
         try {
-            Transaction createdTransaction = transactionService.createTransaction(token,transaction, amountService, accountId);
+            Transaction createdTransaction = transactionService.createTransaction(token, token1,transaction,
+                                                amountService);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdTransaction);
         }catch (ValidationTransactionException | InvalidTokenException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }catch (ValidationIdAccountException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @DeleteMapping(path = "{transactionId}")
-    public ResponseEntity<Object> deleteTransaction(@PathVariable("transactionId") Long transactionId) throws SQLException{
-        try {
-            Transaction deletedTransaction = transactionService.deleteTransaction(transactionId);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedTransaction);
-        }catch (ValidationIdTransaction e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @PutMapping(path = "{transactionId}")
-    public ResponseEntity<Object> updateTransaction(@PathVariable("transactionId") Long transactionId, @RequestBody Transaction transaction, Long accountId, AmountService amountService)
-            throws SQLException {
-        try {
-            Transaction updatedTransaction = transactionService.updateTransaction(transactionId, transaction, accountId, amountService);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(updatedTransaction);
-        }catch (ValidationTransactionException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }catch (ValidationIdTransaction e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }

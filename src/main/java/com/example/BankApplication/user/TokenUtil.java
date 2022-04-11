@@ -22,7 +22,7 @@ public class TokenUtil {
         return token;
     }
 
-    public  Long verifyJwt(String token){
+    public Long verifyJwt(String token){
 
         Algorithm algorithm = Algorithm.HMAC512("secret");
 
