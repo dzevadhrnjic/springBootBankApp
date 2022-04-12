@@ -30,6 +30,16 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+//
+//    @GetMapping(path = "{accountId}/{}")
+//    public ResponseEntity<Object> listAccountId(@PathVariable("accountId") Long accountId) throws SQLException {
+//        try {
+//            Account listIdAccount = accountService.listAccountId(accountId);
+//            return ResponseEntity.status(HttpStatus.OK).body(listIdAccount);
+//        }catch (ValidationIdAccountException e){
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+//        }
+//    }
 
     @GetMapping(path = "{accountId}")
     public ResponseEntity<Object> listAccountsById(@RequestHeader(value = "Authorization") String token,

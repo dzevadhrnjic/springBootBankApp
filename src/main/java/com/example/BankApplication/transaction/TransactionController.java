@@ -32,6 +32,7 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
     @GetMapping(path = "{transactionId}")
     public ResponseEntity<Object> listTransactionById(@PathVariable("transactionId") Long transactionId) throws SQLException {
         try {
@@ -44,12 +45,11 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<Object> createTransaction(@RequestHeader(value = "Authorization") String token,
-                                                    @RequestHeader(value = "Authorization1") String token1,
                                                     @RequestBody Transaction transaction,
-                                                    AmountService amountService) throws SQLException {
+                                                    AmountService amountService, Long accountId) throws SQLException {
         try {
-            Transaction createdTransaction = transactionService.createTransaction(token, token1,transaction,
-                                                amountService);
+            Transaction createdTransaction = transactionService.createTransaction(token, transaction,
+                                                amountService, accountId);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdTransaction);
         }catch (ValidationTransactionException | InvalidTokenException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

@@ -156,13 +156,13 @@ public class TransactionService {
         }throw new SQLException("Couldn't list transaction by id");
     }
 
-    public Transaction createTransaction(String token, String token1,Transaction transaction, AmountService amountService) throws SQLException {
+    public Transaction createTransaction(String token, Transaction transaction, AmountService amountService, Long accountId) throws SQLException {
 
         Long userId1 = tokenUtil.verifyJwt(token);
         TransactionValidationService.transactionFieldsValidation( token,transaction,
                                 transaction.getSourceaccount(), amountService);
-        accountService.listAccountById(token,transaction.getSourceaccount());
-        accountService.listAccountById(token1,transaction.getDestinationaccount());
+        accountService.listAccountById(token, transaction.getSourceaccount());
+        accountService.listAccountId(transaction.getDestinationaccount());
 
 
         if (open()) {

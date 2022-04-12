@@ -43,6 +43,10 @@ public class AccountService {
             COLUMN_ACCOUNT_CREATED_AT + " FROM " + TABLE_ACCOUNT + " WHERE " + COLUMN_ACCOUNT_USER_ID +
             " = ? ";
 
+    public static final String ACCOUNT_ID = " SELECT " + COLUMN_ACCOUNT_ID + ", " + COLUMN_ACCOUNT_NAME +
+            " , " + COLUMN_ACCOUNT_INITIAL_BALANCE + ", " + COLUMN_ACCOUNT_USER_ID + ", " +
+            COLUMN_ACCOUNT_CREATED_AT + " FROM " + TABLE_ACCOUNT + " WHERE " + COLUMN_ACCOUNT_ID + " = ? ";
+
     public static final String CREATE_ACCOUNT = "INSERT INTO " + TABLE_ACCOUNT + '(' + COLUMN_ACCOUNT_NAME + ", " +
             COLUMN_ACCOUNT_INITIAL_BALANCE + ", " + COLUMN_ACCOUNT_USER_ID + ", " + COLUMN_ACCOUNT_CREATED_AT + ") VALUES (?, ?, ?, ?)";
 
@@ -58,6 +62,7 @@ public class AccountService {
     private PreparedStatement accounts;
     private PreparedStatement accountByUserId;
     private PreparedStatement accountById;
+    private PreparedStatement idAccount;
     private PreparedStatement createAccount;
     private PreparedStatement deleteAccount;
     private PreparedStatement updateAccount;
@@ -68,6 +73,7 @@ public class AccountService {
             accounts = connection.prepareStatement(ACCOUNTS);
             accountByUserId = connection.prepareStatement(ACCOUNTS_BY_USER_ID);
             accountById = connection.prepareStatement(ACCOUNT_BY_ID);
+            idAccount = connection.prepareStatement(ACCOUNT_ID);
             createAccount = connection.prepareStatement(CREATE_ACCOUNT, Statement.RETURN_GENERATED_KEYS);
             deleteAccount = connection.prepareStatement(DELETE_ACCOUNT);
             updateAccount = connection.prepareStatement(UPDATE_ACCOUNT);
@@ -88,6 +94,9 @@ public class AccountService {
             }
             if (accountById != null) {
                 accountById.close();
+            }
+            if (idAccount != null){
+                idAccount.close();
             }
             if (createAccount != null) {
                 createAccount.close();
@@ -194,6 +203,32 @@ public class AccountService {
 
             }
             throw new SQLException("Couldn't list account by Id");
+        }
+
+        public Account listAccountId(Long accountId) throws SQLException{
+
+        if (open()){
+
+                idAccount.setLong(1, accountId);
+
+                ResultSet results = idAccount.executeQuery();
+
+                if (!results.isBeforeFirst())
+                    throw new ValidationIdAccountException("Couldn't find the id");
+
+                Account account = new Account();
+
+                while (results.next()){
+                    account.setId(results.getLong(INDEX_ACCOUNT_ID));
+                    account.setName(results.getString(INDEX_ACCOUNT_NAME));
+                    account.setInitialbalance(results.getDouble(INDEX_ACCOUNT_INITIAL_BALANCE));
+                    account.setCreatedat(results.getDate(INDEX_CREATED_AT));
+                }
+
+                close();
+                return account;
+            }
+        throw new SQLException("Couldn't list account");
         }
 
 
