@@ -14,7 +14,6 @@ public class UserService {
 
     HashUtils hashUtils = new HashUtils();
     TokenUtil tokenUtil = new TokenUtil();
-//    private HashUtils hashUtils;
 
     public static final String URL = "jdbc:postgresql://localhost:5432/bank";
 
@@ -232,7 +231,8 @@ public class UserService {
 
         listUserById(userId);
         UserValidationService.userFieldsValidation(user);
-        Long idUser = tokenUtil.verifyJwt(token); //token
+        Long idUser = tokenUtil.verifyJwt(token);
+
         if (open()) {
 
             updateUser.setString(1, user.getFirstname());

@@ -11,7 +11,6 @@ public class HashUtils {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
             messageDigest.reset();
-//            messageDigest.update(salt);
             byte[] hash = messageDigest.digest(password.getBytes());
             return bytesToHex(hash);
         }catch (NoSuchAlgorithmException e){
@@ -30,7 +29,6 @@ public class HashUtils {
         }
         return new String(hexChars);
     }
-
     public static byte[] createSalt(){
         byte[] bytes = new byte[20];
         SecureRandom random = new SecureRandom();

@@ -57,7 +57,8 @@ public class UserController {
     }
 
     @DeleteMapping(path = "{userId}")
-    public ResponseEntity<Object> deleteUser(@RequestHeader(value = "Authorization") String token, @PathVariable("userId") Long userId) throws SQLException {
+    public ResponseEntity<Object> deleteUser(@RequestHeader(value = "Authorization") String token,
+                                             @PathVariable("userId") Long userId) throws SQLException {
         try {
             userService.deleteUser(token, userId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userId);
@@ -70,7 +71,8 @@ public class UserController {
 
     @PutMapping(path = "{userId}")
     public ResponseEntity<Object> updateUser(@RequestHeader(value = "Authorization") String token,
-                                             @PathVariable("userId") Long userId, @RequestBody User user) throws SQLException {
+                                             @PathVariable("userId") Long userId,
+                                             @RequestBody User user) throws SQLException {
         try {
             User updatedUser =userService.updateUser(token, userId, user);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(updatedUser);

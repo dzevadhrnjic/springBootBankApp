@@ -1,16 +1,15 @@
 package com.example.BankApplication.transaction;
 
-import com.example.BankApplication.user.TokenUtil;
-
 import java.sql.SQLException;
 
 public class TransactionValidationService {
 
-    public static TokenUtil tokenUtil = new TokenUtil();
+    public static AmountService amountService = new AmountService();
 
-    public static void transactionFieldsValidation(String token,Transaction transaction, Long accountId, AmountService amountService) throws SQLException{
+    public static void transactionFieldsValidation(String token, Transaction transaction, Long accountId) throws SQLException{
         amountValidation(transaction);
-        sourceAccountValidation(token,accountId, transaction, amountService);
+        sourceAccountValidation(token,accountId, transaction);
+
     }
 
 
@@ -22,7 +21,7 @@ public class TransactionValidationService {
         }
     }
 
-    public static void sourceAccountValidation(String token,Long accountId, Transaction transaction, AmountService amountService) throws SQLException {
+    public static void sourceAccountValidation(String token,Long accountId, Transaction transaction) throws SQLException {
         if (amountService.accountIncome(accountId) < transaction.getAmount()){
             throw new ValidationTransactionException("You don't have that amount on your account");
         }

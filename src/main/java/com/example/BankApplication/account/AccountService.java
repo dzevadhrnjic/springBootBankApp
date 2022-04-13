@@ -289,10 +289,10 @@ public class AccountService {
     }
     public Account updateAccount(String token, Long accountId, Account account) throws SQLException{
 
+        Long userId = tokenUtil.verifyJwt(token);
         listAccountById(token,accountId);
         AccountValidationService.accountFieldsValidation(account);
         userService.listUserById(account.getUserid());
-        Long userId = tokenUtil.verifyJwt(token);
 
         if (open()){
 

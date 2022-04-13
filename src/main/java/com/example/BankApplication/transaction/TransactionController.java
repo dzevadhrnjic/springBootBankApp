@@ -45,11 +45,9 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<Object> createTransaction(@RequestHeader(value = "Authorization") String token,
-                                                    @RequestBody Transaction transaction,
-                                                    AmountService amountService, Long accountId) throws SQLException {
+                                                    @RequestBody Transaction transaction) throws SQLException {
         try {
-            Transaction createdTransaction = transactionService.createTransaction(token, transaction,
-                                                amountService, accountId);
+            Transaction createdTransaction = transactionService.createTransaction(token, transaction);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdTransaction);
         }catch (ValidationTransactionException | InvalidTokenException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

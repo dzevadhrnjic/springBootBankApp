@@ -14,9 +14,9 @@ import java.util.List;
 
 public class TransactionService {
 
-    TokenUtil tokenUtil = new TokenUtil();
-
+    public static TokenUtil tokenUtil = new TokenUtil();
     public static AccountService accountService = new AccountService();
+    public static AmountService amountService = new AmountService();
 
     public static final String URL = "jdbc:postgresql://localhost:5432/bank";
 
@@ -156,11 +156,11 @@ public class TransactionService {
         }throw new SQLException("Couldn't list transaction by id");
     }
 
-    public Transaction createTransaction(String token, Transaction transaction, AmountService amountService, Long accountId) throws SQLException {
+    public Transaction createTransaction(String token, Transaction transaction) throws SQLException {
 
-        Long userId1 = tokenUtil.verifyJwt(token);
+        Long userId = tokenUtil.verifyJwt(token);
         TransactionValidationService.transactionFieldsValidation( token,transaction,
-                                transaction.getSourceaccount(), amountService);
+                                transaction.getSourceaccount());
         accountService.listAccountById(token, transaction.getSourceaccount());
         accountService.listAccountId(transaction.getDestinationaccount());
 
@@ -172,7 +172,7 @@ public class TransactionService {
                 createTransaction.setDouble(3, transaction.getAmount());
                 LocalDate localDate = LocalDate.now();
                 createTransaction.setDate(4, Date.valueOf(localDate));
-                createTransaction.setLong(5, userId1);
+                createTransaction.setLong(5, userId);
 
             int affectedRows = createTransaction.executeUpdate();
 
