@@ -55,4 +55,16 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+    @PostMapping(path = "{transactionId}/{reverse}")
+    public ResponseEntity<Object> reverseTransaction(@PathVariable("transactionId")Long transactionId, Transaction transaction) throws SQLException{
+        try{
+            Transaction transactionReverse = transactionService.reverseTransaction(transactionId);
+            return ResponseEntity.status(HttpStatus.OK).body(transactionReverse);
+        }catch (ValidationIdTransaction e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }catch (InvalidTokenException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }

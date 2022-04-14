@@ -16,7 +16,6 @@ public class TransactionService {
 
     public static TokenUtil tokenUtil = new TokenUtil();
     public static AccountService accountService = new AccountService();
-    public static AmountService amountService = new AmountService();
 
     public static final String URL = "jdbc:postgresql://localhost:5432/bank";
 
@@ -35,10 +34,10 @@ public class TransactionService {
     public static final int INDEX_TRANSACTION_CREATED_AT = 5;
     public static final int INDEX_TRANSACTION_USER_ID = 6;
 
-    public static final String TRANSACTION_BY_ID = "SELECT " + COLUMN_TRANSACTION_ID + ", "
-            + COLUMN_TRANSACTION_SOURCE_ACCOUNT + ", " + COLUMN_TRANSACTION_DESTINATION_ACCOUNT + ", "
-            + COLUMN_TRANSACTION_AMOUNT + ", " + COLUMN_TRANSACTION_CREATED_AT + " FROM " + TABLE_TRANSACTION + " WHERE "
-            + COLUMN_TRANSACTION_ID + " = ? ";
+    public static final String TRANSACTION_BY_ID = "SELECT " + COLUMN_TRANSACTION_ID + ", " +
+            COLUMN_TRANSACTION_SOURCE_ACCOUNT + ", " + COLUMN_TRANSACTION_DESTINATION_ACCOUNT + ", "
+            + COLUMN_TRANSACTION_AMOUNT + ", " + COLUMN_TRANSACTION_CREATED_AT + ", " + COLUMN_TRANSACTION_USER_ID +
+            " FROM " + TABLE_TRANSACTION + " WHERE " + COLUMN_TRANSACTION_ID + " = ? ";
 
     public static final String TRANSACTION_BY_USER_ID = "SELECT " + COLUMN_TRANSACTION_ID + ", " + COLUMN_TRANSACTION_SOURCE_ACCOUNT +
             ", " + COLUMN_TRANSACTION_DESTINATION_ACCOUNT + ", " + COLUMN_TRANSACTION_AMOUNT + ", " + COLUMN_TRANSACTION_CREATED_AT +
@@ -46,7 +45,7 @@ public class TransactionService {
 
     public static final String CREATE_TRANSACTION = "INSERT INTO " + TABLE_TRANSACTION + '(' + COLUMN_TRANSACTION_SOURCE_ACCOUNT
             + ", " + COLUMN_TRANSACTION_DESTINATION_ACCOUNT + ", " + COLUMN_TRANSACTION_AMOUNT + ", "
-            + COLUMN_TRANSACTION_CREATED_AT + ", " + COLUMN_TRANSACTION_USER_ID +  ") VALUES ( ?, ?, ?, ?, ?)";
+            + COLUMN_TRANSACTION_CREATED_AT + ", " + COLUMN_TRANSACTION_USER_ID +  ") VALUES (?, ?, ?, ?, ?)";
 
     public static final String DELETE_TRANSACTION = "DELETE FROM " + TABLE_TRANSACTION + " WHERE " + COLUMN_TRANSACTION_ID
                             + " = ? ";
@@ -196,6 +195,44 @@ public class TransactionService {
             }
             close();
             return transaction;
+    }
+
+    public Transaction reverseTransaction(Long transactionId)throws SQLException{
+
+        Transaction transaction = listTransactionById(transactionId);
+
+        if (open()){
+
+            createTransaction.setLong(1, transaction.getId());
+            createTransaction.setLong(1, transaction.getSourceaccount());
+            createTransaction.setLong(2, transaction.getDestinationaccount());
+            createTransaction.setDouble(3, transaction.getAmount());
+            LocalDate localDate = LocalDate.now();
+            createTransaction.setDate(4, Date.valueOf(localDate));
+            createTransaction.setLong(5, transaction.getUserid());
+
+            int affectedRows = createTransaction.executeUpdate();
+
+            if (affectedRows > 0) {
+                System.out.println("Created Transaction");
+            } else {
+                throw new InvalidTokenException("No user with that id");
+            }
+
+            ResultSet generatedKeys = createTransaction.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                transaction.setId(generatedKeys.getLong(1));
+                transaction.setSourceaccount(generatedKeys.getLong(2));
+                transaction.setDestinationaccount(generatedKeys.getLong(3));
+                transaction.setAmount(generatedKeys.getDouble(4));
+                transaction.setCreatedat(generatedKeys.getDate(5));
+                transaction.setUserid(generatedKeys.getLong(6));
+            } else {
+                throw new InvalidTokenException("Couldn't get the id");
+            }
+        }
+        close();
+        return transaction;
     }
 }
 
