@@ -1,6 +1,7 @@
 package com.example.BankApplication.user;
 
 import com.example.BankApplication.account.InvalidTokenException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +14,15 @@ import java.util.List;
 
 public class UserController {
 
-    private UserService userService = new UserService();
     private LoginService loginService = new LoginService();
+
+    private final UserService userService;
+
+    @Autowired
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
     public ResponseEntity<Object> listUsers() throws SQLException {

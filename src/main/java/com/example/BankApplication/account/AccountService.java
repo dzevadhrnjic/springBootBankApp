@@ -1,7 +1,6 @@
 package com.example.BankApplication.account;
 
 import com.example.BankApplication.user.TokenUtil;
-import com.example.BankApplication.user.UserService;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
@@ -13,7 +12,7 @@ import java.util.List;
 
 public class AccountService {
 
-    UserService userService = new UserService();
+//    UserService userService = new UserService();
     TokenUtil tokenUtil = new TokenUtil();
 
     public static final String URL = "jdbc:postgresql://localhost:5432/bank";
@@ -235,7 +234,7 @@ public class AccountService {
     public Account createAccount(Account account) throws SQLException {
 
             AccountValidationService.accountFieldsValidation(account);
-            userService.listUserById(account.getUserid());
+//            userService.listUserById(account.getUserid());
 
             if (open()) {
 
@@ -292,7 +291,7 @@ public class AccountService {
         Long userId = tokenUtil.verifyJwt(token);
         listAccountById(token,accountId);
         AccountValidationService.accountFieldsValidation(account);
-        userService.listUserById(account.getUserid());
+//        userService.listUserById(account.getUserid());
 
         if (open()){
 

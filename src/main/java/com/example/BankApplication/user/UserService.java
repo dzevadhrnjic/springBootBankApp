@@ -1,11 +1,11 @@
 package com.example.BankApplication.user;
 
 import com.example.BankApplication.account.InvalidTokenException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -14,6 +14,14 @@ public class UserService {
 
     HashUtils hashUtils = new HashUtils();
     TokenUtil tokenUtil = new TokenUtil();
+
+    private final UserRepository userRepository;
+
+    @Autowired
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public static final String URL = "jdbc:postgresql://localhost:5432/bank";
 
@@ -36,10 +44,10 @@ public class UserService {
     public static final int INDEX_USER_CREATED_AT = 7;
 
 
-    public static final String USERS = "SELECT " + COLUMN_USER_ID + ", " + COLUMN_USER_FIRST_NAME + ", "
-            + COLUMN_USER_LAST_NAME + ", " + COLUMN_USER_ADDRESS + ", " + COLUMN_USER_PHONE_NUMBER + ", "
-            + COLUMN_USER_EMAIL + ", " + COLUMN_USER_CREATED_AT + " FROM " + TABLE_USER + " WHERE "
-            + COLUMN_USER_ID + " = ? ";
+//    public static final String USERS = "SELECT " + COLUMN_USER_ID + ", " + COLUMN_USER_FIRST_NAME + ", "
+//            + COLUMN_USER_LAST_NAME + ", " + COLUMN_USER_ADDRESS + ", " + COLUMN_USER_PHONE_NUMBER + ", "
+//            + COLUMN_USER_EMAIL + ", " + COLUMN_USER_CREATED_AT + " FROM " + TABLE_USER + " WHERE "
+//            + COLUMN_USER_ID + " = ? ";
 
     public static final String USER_BY_ID = "SELECT " + COLUMN_USER_ID + ", " + COLUMN_USER_FIRST_NAME + ", "
             + COLUMN_USER_LAST_NAME + ", " + COLUMN_USER_ADDRESS + ", " + COLUMN_USER_PHONE_NUMBER + ", "
@@ -70,7 +78,7 @@ public class UserService {
     public boolean open() {
         try {
             connection = DriverManager.getConnection(URL, "postgres", "kovilica1234");
-            users = connection.prepareStatement(USERS);
+//            users = connection.prepareStatement(USERS);
             userById = connection.prepareStatement(USER_BY_ID);
             createUser = connection.prepareStatement(CREATE_USER, Statement.RETURN_GENERATED_KEYS);
             deleteUser = connection.prepareStatement(DELETE_USER);
@@ -84,9 +92,9 @@ public class UserService {
 
     public void close() {
         try {
-            if (users != null) {
-                users.close();
-            }
+//            if (users != null) {
+//                users.close();
+//            }
             if (userById != null) {
                 userById.close();
             }
@@ -107,36 +115,37 @@ public class UserService {
         }
     }
 
-    public List<User> listUsers() throws SQLException {
-
-        if (open()) {
-
-            StringBuilder stringBuilder = new StringBuilder("SELECT * FROM ");
-            stringBuilder.append(TABLE_USER);
-
-            try (Statement statement = connection.createStatement();
-                 ResultSet results = statement.executeQuery(stringBuilder.toString())) {
-
-                List<User> users = new ArrayList<>();
-
-                while (results.next()) {
-                    User user = new User();
-                    user.setId(results.getLong(INDEX_USER_ID));
-                    user.setFirstname(results.getString(INDEX_USER_FIRST_NAME));
-                    user.setLastname(results.getString(INDEX_USER_LAST_NAME));
-                    user.setAddress(results.getString(INDEX_USER_ADDRESS));
-                    user.setPhonenumber(results.getString(INDEX_USER_PHONE_NUMBER));
-                    user.setEmail(results.getString(INDEX_USER_EMAIL));
-                    user.setCreatedat(results.getDate(INDEX_USER_CREATED_AT));
-                    users.add(user);
-                }
-                close();
-                return users;
-            }catch (SQLException e){
-                e.printStackTrace();
-            }
-        }
-        return null;
+    public List<User> listUsers() {
+//
+//        if (open()) {
+//
+//            StringBuilder stringBuilder = new StringBuilder("SELECT * FROM ");
+//            stringBuilder.append(TABLE_USER);
+//
+//            try (Statement statement = connection.createStatement();
+//                 ResultSet results = statement.executeQuery(stringBuilder.toString())) {
+//
+//                List<User> users = new ArrayList<>();
+//
+//                while (results.next()) {
+//                    User user = new User();
+//                    user.setId(results.getLong(INDEX_USER_ID));
+//                    user.setFirstname(results.getString(INDEX_USER_FIRST_NAME));
+//                    user.setLastname(results.getString(INDEX_USER_LAST_NAME));
+//                    user.setAddress(results.getString(INDEX_USER_ADDRESS));
+//                    user.setPhonenumber(results.getString(INDEX_USER_PHONE_NUMBER));
+//                    user.setEmail(results.getString(INDEX_USER_EMAIL));
+//                    user.setCreatedat(results.getDate(INDEX_USER_CREATED_AT));
+//                    users.add(user);
+//                }
+//                close();
+//                return users;
+//            }catch (SQLException e){
+//                e.printStackTrace();
+//            }
+//        }
+//        return null;
+        return userRepository.findAll();
     }
 
     public User listUserById(Long userId) throws SQLException {
