@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/users")
@@ -27,8 +26,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<Object> listUsers() throws SQLException {
         try {
-            List <User> list = userService.listUsers();
-            return ResponseEntity.status(HttpStatus.OK).body(list);
+            return ResponseEntity.status(HttpStatus.OK).body(userService.listUsers());
         }catch (ValidationIdException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

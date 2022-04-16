@@ -16,7 +16,6 @@ public class UserService {
     TokenUtil tokenUtil = new TokenUtil();
 
     private final UserRepository userRepository;
-
     @Autowired
 
     public UserService(UserRepository userRepository) {
@@ -35,32 +34,9 @@ public class UserService {
     public static final String COLUMN_USER_CREATED_AT = "createdat";
     public static final String COLUMN_PASSWORD = "password";
 
-    public static final int INDEX_USER_ID = 1;
-    public static final int INDEX_USER_FIRST_NAME = 2;
-    public static final int INDEX_USER_LAST_NAME = 3;
-    public static final int INDEX_USER_ADDRESS = 4;
-    public static final int INDEX_USER_PHONE_NUMBER = 5;
-    public static final int INDEX_USER_EMAIL = 6;
-    public static final int INDEX_USER_CREATED_AT = 7;
 
-
-//    public static final String USERS = "SELECT " + COLUMN_USER_ID + ", " + COLUMN_USER_FIRST_NAME + ", "
-//            + COLUMN_USER_LAST_NAME + ", " + COLUMN_USER_ADDRESS + ", " + COLUMN_USER_PHONE_NUMBER + ", "
-//            + COLUMN_USER_EMAIL + ", " + COLUMN_USER_CREATED_AT + " FROM " + TABLE_USER + " WHERE "
-//            + COLUMN_USER_ID + " = ? ";
-
-    public static final String USER_BY_ID = "SELECT " + COLUMN_USER_ID + ", " + COLUMN_USER_FIRST_NAME + ", "
-            + COLUMN_USER_LAST_NAME + ", " + COLUMN_USER_ADDRESS + ", " + COLUMN_USER_PHONE_NUMBER + ", "
-            + COLUMN_USER_EMAIL + ", " + COLUMN_USER_CREATED_AT + " FROM " + TABLE_USER + " WHERE "
-            + COLUMN_USER_ID + " = ? ";
-
-    public static final String CREATE_USER = "INSERT INTO " + TABLE_USER + '(' +
-            COLUMN_USER_FIRST_NAME + ", " + COLUMN_USER_LAST_NAME + ", " + COLUMN_USER_ADDRESS + ", "
-            + COLUMN_USER_PHONE_NUMBER + ", " + COLUMN_USER_EMAIL + ", " + COLUMN_USER_CREATED_AT + ", " +
-            COLUMN_PASSWORD + ") VALUES ( ?, ?, ?, ?, ?, ?, ?)";
-
-        public static final String DELETE_USER = "DELETE FROM " + TABLE_USER + " WHERE " + COLUMN_USER_ID + " = ? AND " +
-                COLUMN_USER_ID + " = ? ";
+//    public static final String DELETE_USER = "DELETE FROM " + TABLE_USER + " WHERE " + COLUMN_USER_ID + " = ? AND " +
+//                COLUMN_USER_ID + " = ? ";
 
     public static final String UPDATE_USER = "UPDATE " + TABLE_USER + " SET " + COLUMN_USER_FIRST_NAME + " =?, " +
             COLUMN_USER_LAST_NAME + " =?, " + COLUMN_USER_ADDRESS + " =?, " + COLUMN_USER_PHONE_NUMBER + " =?, " +
@@ -69,19 +45,13 @@ public class UserService {
 
     private Connection connection;
 
-    private PreparedStatement users;
-    private PreparedStatement userById;
-    private PreparedStatement createUser;
     private PreparedStatement deleteUser;
     private PreparedStatement updateUser;
 
     public boolean open() {
         try {
             connection = DriverManager.getConnection(URL, "postgres", "kovilica1234");
-//            users = connection.prepareStatement(USERS);
-            userById = connection.prepareStatement(USER_BY_ID);
-            createUser = connection.prepareStatement(CREATE_USER, Statement.RETURN_GENERATED_KEYS);
-            deleteUser = connection.prepareStatement(DELETE_USER);
+//            deleteUser = connection.prepareStatement(DELETE_USER);
             updateUser = connection.prepareStatement(UPDATE_USER);
             return true;
         } catch (SQLException e) {
@@ -92,18 +62,9 @@ public class UserService {
 
     public void close() {
         try {
-//            if (users != null) {
-//                users.close();
+//            if (deleteUser != null) {
+//                deleteUser.close();
 //            }
-            if (userById != null) {
-                userById.close();
-            }
-            if (createUser != null) {
-                createUser.close();
-            }
-            if (deleteUser != null) {
-                deleteUser.close();
-            }
             if (updateUser != null) {
                 updateUser.close();
             }
@@ -116,125 +77,47 @@ public class UserService {
     }
 
     public List<User> listUsers() {
-//
-//        if (open()) {
-//
-//            StringBuilder stringBuilder = new StringBuilder("SELECT * FROM ");
-//            stringBuilder.append(TABLE_USER);
-//
-//            try (Statement statement = connection.createStatement();
-//                 ResultSet results = statement.executeQuery(stringBuilder.toString())) {
-//
-//                List<User> users = new ArrayList<>();
-//
-//                while (results.next()) {
-//                    User user = new User();
-//                    user.setId(results.getLong(INDEX_USER_ID));
-//                    user.setFirstname(results.getString(INDEX_USER_FIRST_NAME));
-//                    user.setLastname(results.getString(INDEX_USER_LAST_NAME));
-//                    user.setAddress(results.getString(INDEX_USER_ADDRESS));
-//                    user.setPhonenumber(results.getString(INDEX_USER_PHONE_NUMBER));
-//                    user.setEmail(results.getString(INDEX_USER_EMAIL));
-//                    user.setCreatedat(results.getDate(INDEX_USER_CREATED_AT));
-//                    users.add(user);
-//                }
-//                close();
-//                return users;
-//            }catch (SQLException e){
-//                e.printStackTrace();
-//            }
-//        }
-//        return null;
         return userRepository.findAll();
     }
 
-    public User listUserById(Long userId) throws SQLException {
+    public User listUserById(Long userId) {
 
-        if (open()) {
+        User user = userRepository.getUserById(userId);
 
-            userById.setLong(1, userId);
-
-            ResultSet results = userById.executeQuery();
-            if (!results.isBeforeFirst())
-                throw new ValidationIdException("Couldn't find user with that id");
-
-            User user = new User();
-
-            while (results.next()) {
-                user.setId(results.getLong(INDEX_USER_ID));
-                user.setFirstname(results.getString(INDEX_USER_FIRST_NAME));
-                user.setLastname(results.getString(INDEX_USER_LAST_NAME));
-                user.setAddress(results.getString(INDEX_USER_ADDRESS));
-                user.setPhonenumber(results.getString(INDEX_USER_PHONE_NUMBER));
-                user.setEmail(results.getString(INDEX_USER_EMAIL));
-                user.setCreatedat(results.getDate(INDEX_USER_CREATED_AT));
-            }
-            close();
-            return user;
-        }throw new SQLException("Couldn't list user");
-    }
-
-
-    public User createUser(User user) throws SQLException {
-
-        UserValidationService.userFieldsValidation(user);
-
-        if (open()) {
-
-            createUser.setString(1, user.getFirstname());
-            createUser.setString(2, user.getLastname());
-            createUser.setString(3, user.getAddress());
-            createUser.setString(4, user.getPhonenumber());
-            createUser.setString(5, user.getEmail());
-            LocalDate localDate = LocalDate.now();
-            createUser.setDate(6, Date.valueOf(localDate));
-            createUser.setString(7,hashUtils.generateHash(user.getPassword()));
-
-
-            int affectedRows = createUser.executeUpdate();
-
-            if (affectedRows != 1) {
-                System.out.println("Couldn't create user");
-            }
-
-            try (ResultSet generatedKeys = createUser.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    user.setId(generatedKeys.getLong(1));
-                    user.setFirstname(generatedKeys.getString(2));
-                    user.setLastname(generatedKeys.getString(3));
-                    user.setAddress(generatedKeys.getString(4));
-                    user.setPhonenumber(generatedKeys.getString(5));
-                    user.setEmail(generatedKeys.getString(6));
-                    user.setCreatedat(generatedKeys.getDate(7));
-                } else {
-                    throw new SQLException("Couldn't get the id");
-                }
-            }
+        if (user == null){
+            throw new ValidationIdException("Couldn't find user with that id");
         }
-        close();
+
         return user;
     }
 
-    public void deleteUser(String token, Long userId) throws SQLException {
+    public User createUser(User user) {
 
-        listUserById(userId);
-        Long idUser = tokenUtil.verifyJwt(token);
+        UserValidationService.userFieldsValidation(user);
 
-        if (open()) {
+        user.setFirstname(user.getFirstname());
+        user.setLastname(user.getLastname());
+        user.setAddress(user.getAddress());
+        user.setPhonenumber(user.getPhonenumber());
+        user.setEmail(user.getEmail());
+        LocalDate localDate = LocalDate.now();
+        user.setCreatedat(Date.valueOf(localDate));
+        user.setPassword(hashUtils.generateHash(user.getPassword()));
 
-                deleteUser.setLong(1, userId);
-                deleteUser.setLong(2, idUser);
+        userRepository.save(user);
 
-                int affectedRows = deleteUser.executeUpdate();
-
-                if (affectedRows > 0) {
-                    System.out.println("User was deleted");
-                }else {
-                    throw new InvalidTokenException("Unauthorized user");
-            }
-        }
-        close();
+        return user;
     }
+
+    public void deleteUser(String token, Long userId) {
+
+        Long idUser = tokenUtil.verifyJwt(token);
+        listUserById(userId);
+
+        userRepository.deleteById(idUser);
+
+    }
+
 
     public User updateUser(String token, Long userId, User user) throws SQLException {
 

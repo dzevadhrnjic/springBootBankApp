@@ -3,9 +3,17 @@ package com.example.BankApplication.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.*;
 import java.util.Date;
 
+// napravio si tabelu koja se zove db user i sad moras to naparirat na ovu User klasu
+
+@Entity // ovo uvijek mora bit za klase koje se mapiraju na tabele
+@Table(name = "dbuser") // ovako mapiras izmedju klase u Javi i tabele u SQL-u
 public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private Long id;
     private String firstname;
@@ -16,30 +24,6 @@ public class User {
     private Date createdat;
     private String password;
 
-    public User() {
-    }
-
-    public User(Long id, String firstname, String lastname, String address, String phonenumber, String email, Date createdat, String password) {
-        this.id = id;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.address = address;
-        this.phonenumber = phonenumber;
-        this.email = email;
-        this.createdat = createdat;
-    }
-
-    public User(String firstname, String lastname, String address, String phonenumber, String email, Date createdat, String password) {
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.address = address;
-        this.phonenumber = phonenumber;
-        this.email = email;
-        this.createdat = createdat;
-    }
-
-    public User(String jwt) {
-    }
 
     public Long getId() {
         return id;
