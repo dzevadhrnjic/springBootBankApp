@@ -63,10 +63,9 @@ public class UserController {
     }
 
     @DeleteMapping(path = "{userId}")
-    public ResponseEntity<Object> deleteUser(@RequestHeader(value = "Authorization") String token,
-                                             @PathVariable("userId") Long userId) throws SQLException {
+    public ResponseEntity<Object> deleteUser(@PathVariable("userId") Long userId) throws SQLException {
         try {
-            userService.deleteUser(token, userId);
+            userService.deleteUser(userId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userId);
         } catch (ValidationIdException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -76,11 +75,11 @@ public class UserController {
     }
 
     @PutMapping(path = "{userId}")
-    public ResponseEntity<Object> updateUser(@RequestHeader(value = "Authorization") String token,
+    public ResponseEntity<Object> updateUser(
                                              @PathVariable("userId") Long userId,
                                              @RequestBody User user) throws SQLException {
         try {
-            User updatedUser =userService.updateUser(token, userId, user);
+            User updatedUser =userService.updateUser(userId, user);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(updatedUser);
         } catch (ValidationException | InvalidTokenException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
