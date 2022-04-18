@@ -15,12 +15,13 @@ public class UserService {
     TokenUtil tokenUtil = new TokenUtil();
 
     private final UserRepository userRepository;
+
     @Autowired
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-    
+
     public List<User> listUsers() {
         return userRepository.findAll();
     }
@@ -61,12 +62,7 @@ public class UserService {
 
         listUserById(userId);
         UserValidationService.userFieldsValidation(user);
-
-        user.setFirstname(user.getFirstname());
-        user.setLastname(user.getLastname());
-        user.setAddress(user.getAddress());
-        user.setPhonenumber(user.getPhonenumber());
-        user.setEmail(user.getEmail());
+        
         LocalDate localDate = LocalDate.now();
         user.setCreatedat(Date.valueOf(localDate));
         user.setPassword(hashUtils.generateHash(user.getPassword()));
