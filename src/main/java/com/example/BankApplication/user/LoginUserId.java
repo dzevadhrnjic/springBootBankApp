@@ -4,12 +4,7 @@ public class LoginUserId {
 
     private Long id;
 
-    public LoginUserId(String jwt) {
-    }
-
-    public LoginUserId() {
-
-    }
+    public LoginUserId() {}
 
     public Long getId() {
         return id;

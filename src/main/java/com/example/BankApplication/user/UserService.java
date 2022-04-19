@@ -14,13 +14,8 @@ public class UserService {
     HashUtils hashUtils = new HashUtils();
     TokenUtil tokenUtil = new TokenUtil();
 
-    private final UserRepository userRepository;
-
     @Autowired
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    UserRepository userRepository;
 
     public List<User> listUsers() {
         return userRepository.findAll();
@@ -62,7 +57,7 @@ public class UserService {
 
         listUserById(userId);
         UserValidationService.userFieldsValidation(user);
-        
+
         LocalDate localDate = LocalDate.now();
         user.setCreatedat(Date.valueOf(localDate));
         user.setPassword(hashUtils.generateHash(user.getPassword()));
@@ -71,6 +66,5 @@ public class UserService {
         userRepository.save(user);
 
         return user;
-
     }
 }

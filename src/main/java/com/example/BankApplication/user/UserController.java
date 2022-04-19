@@ -1,7 +1,6 @@
 package com.example.BankApplication.user;
 
 import com.example.BankApplication.account.InvalidTokenException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,14 +12,12 @@ import java.sql.SQLException;
 
 public class UserController {
 
-    private LoginService loginService = new LoginService();
-
     private final UserService userService;
+    private final LoginService loginService;
 
-    @Autowired
-
-    public UserController(UserService userService) {
+    public UserController(UserService userService, LoginService loginService) {
         this.userService = userService;
+        this.loginService = loginService;
     }
 
     @GetMapping
@@ -53,10 +50,10 @@ public class UserController {
     }
 
     @PostMapping(path = "login")
-    public ResponseEntity<Object> userLogin(@RequestBody User user)throws SQLException{
+    public ResponseEntity<Object> userLogin(@RequestBody UserLogin userLogin)throws SQLException{
         try {
-            AccessToken user1 = loginService.loginUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(user1);
+            AccessToken loginUser = loginService.loginUser(userLogin);
+            return ResponseEntity.status(HttpStatus.CREATED).body(loginUser);
         }catch (InvalidEmailOrPasswordException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

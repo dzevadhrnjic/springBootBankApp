@@ -1,20 +1,20 @@
 package com.example.BankApplication.user;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "dbuser")
+
 public class UserLogin {
 
     private String email;
     private String password;
+    @Id
     private Long id;
 
     public UserLogin() {
-    }
-
-    public UserLogin(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
-
-    public UserLogin(String jwt) {
     }
 
     public String getEmail() {
