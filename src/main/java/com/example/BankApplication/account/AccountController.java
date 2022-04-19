@@ -16,8 +16,13 @@ import java.util.List;
 
 public class AccountController {
 
-    private AccountService accountService = new AccountService();
     private AmountService amountService = new AmountService();
+
+    private final AccountService accountService;
+
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @GetMapping
     public ResponseEntity<Object> listAccountByUserId(@RequestHeader(value = "Authorization") String token) throws SQLException {
@@ -30,7 +35,7 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-    
+
     @GetMapping(path = "{accountId}")
     public ResponseEntity<Object> listAccountsById(@RequestHeader(value = "Authorization") String token,
                                                    @PathVariable("accountId") Long accountId) throws SQLException {

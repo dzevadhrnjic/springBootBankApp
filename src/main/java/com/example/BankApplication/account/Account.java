@@ -1,32 +1,24 @@
 package com.example.BankApplication.account;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "account")
+
 public class Account {
+
+    @Id
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private Long id;
     private String name;
     private Double initialbalance;
     private Long userid;
     private Date createdat;
-    private Double balance;
 
     public Account() {
-    }
-
-    public Account(Long id, String name, double initialbalance, Long userid, Date createdat) {
-        this.id = id;
-        this.name = name;
-        this.initialbalance = initialbalance;
-        this.userid = userid;
-        this.createdat = createdat;
-    }
-
-    public Account(String name, double initialbalance, Long userid, Date createdat) {
-        this.name = name;
-        this.initialbalance = initialbalance;
-        this.userid = userid;
-        this.createdat = createdat;
     }
 
     public Long getId() {
