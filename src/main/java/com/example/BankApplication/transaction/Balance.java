@@ -1,5 +1,9 @@
 package com.example.BankApplication.transaction;
 
+import javax.persistence.Table;
+
+@Table(name = "dbtransaction")
+
 public class Balance {
 
     private Double balance;

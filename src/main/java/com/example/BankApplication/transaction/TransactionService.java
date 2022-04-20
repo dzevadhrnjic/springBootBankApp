@@ -89,41 +89,7 @@ public class TransactionService {
         transactionRepository.save(reverse);
 
         return reverse;
-//        Transaction transaction = listTransactionById(transactionId);
-//
-//        if (open()){
-//
-//            createTransaction.setLong(1, transaction.getId());
-//            createTransaction.setLong(1, transaction.getSourceaccount());
-//            createTransaction.setLong(2, transaction.getDestinationaccount());
-//            createTransaction.setDouble(3, transaction.getAmount());
-//            LocalDate localDate = LocalDate.now();
-//            createTransaction.setDate(4, Date.valueOf(localDate));
-//            createTransaction.setLong(5, transaction.getUserid());
-//
-//            int affectedRows = createTransaction.executeUpdate();
-//
-//            if (affectedRows > 0) {
-//                System.out.println("Created Transaction");
-//            } else {
-//                throw new InvalidTokenException("No user with that id");
-//            }
-//
-//            ResultSet generatedKeys = createTransaction.getGeneratedKeys();
-//            if (generatedKeys.next()) {
-//                transaction.setId(generatedKeys.getLong(1));
-//                transaction.setSourceaccount(generatedKeys.getLong(2));
-//                transaction.setDestinationaccount(generatedKeys.getLong(3));
-//                transaction.setAmount(generatedKeys.getDouble(4));
-//                transaction.setCreatedat(generatedKeys.getDate(5));
-//                transaction.setUserid(generatedKeys.getLong(6));
-//            } else {
-//                throw new InvalidTokenException("Couldn't get the id");
-//            }
-//        }
-//        close();
-//        return transaction;
-//    }
+
     }
 }
 

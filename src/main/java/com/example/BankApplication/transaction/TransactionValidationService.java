@@ -4,7 +4,8 @@ import java.sql.SQLException;
 
 public class TransactionValidationService {
 
-    public static AmountService amountService = new AmountService();
+    public static AmountService amountService;
+
 
     public static void transactionFieldsValidation(String token, Transaction transaction, Long accountId) throws SQLException{
         amountValidation(transaction);
@@ -21,7 +22,7 @@ public class TransactionValidationService {
         }
     }
 
-    public static void sourceAccountValidation(String token,Long accountId, Transaction transaction) throws SQLException {
+    public static void sourceAccountValidation(String token, Long accountId, Transaction transaction) throws SQLException {
         if (amountService.accountIncome(accountId) < transaction.getAmount()){
             throw new ValidationTransactionException("You don't have that amount on your account");
         }

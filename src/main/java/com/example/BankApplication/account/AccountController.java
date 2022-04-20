@@ -16,12 +16,12 @@ import java.util.List;
 
 public class AccountController {
 
-    private AmountService amountService = new AmountService();
-
     private final AccountService accountService;
+    private final AmountService amountService;
 
-    public AccountController(AccountService accountService) {
+    public AccountController(AccountService accountService, AmountService amountService) {
         this.accountService = accountService;
+        this.amountService = amountService;
     }
 
     @GetMapping
