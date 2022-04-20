@@ -1,11 +1,18 @@
 package com.example.BankApplication.transaction;
 
+import org.springframework.stereotype.Service;
+
 import java.sql.SQLException;
+
+@Service
 
 public class TransactionValidationService {
 
-    public static AmountService amountService;
+    private static AmountService amountService;
 
+    public TransactionValidationService(AmountService amountService) {
+        TransactionValidationService.amountService = amountService;
+    }
 
     public static void transactionFieldsValidation(String token, Transaction transaction, Long accountId) throws SQLException{
         amountValidation(transaction);
