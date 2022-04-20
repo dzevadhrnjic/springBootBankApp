@@ -53,6 +53,7 @@ public class TransactionService {
 
     }
 
+
     public Transaction createTransaction(String token, Transaction transaction) throws SQLException {
 
         Long userId = tokenUtil.verifyJwt(token);
@@ -69,13 +70,25 @@ public class TransactionService {
         transactionRepository.save(transaction);
 
         return transaction;
-        
+
     }
 
     public Transaction reverseTransaction(Long transactionId) throws SQLException {
 
+        Transaction transaction = listTransactionById(transactionId);
 
-        return null;
+        Transaction reverse = new Transaction();
+
+        reverse.setSourceaccount(transaction.getDestinationaccount());
+        reverse.setDestinationaccount(transaction.getSourceaccount());
+        reverse.setAmount(transaction.getAmount());
+        LocalDate localDate = LocalDate.now();
+        reverse.setCreatedat(Date.valueOf(localDate));
+        reverse.setUserid(transaction.getUserid());
+
+        transactionRepository.save(reverse);
+
+        return reverse;
 //        Transaction transaction = listTransactionById(transactionId);
 //
 //        if (open()){

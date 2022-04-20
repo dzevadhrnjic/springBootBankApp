@@ -16,5 +16,4 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("select t from Transaction t where t.id = ?1")
     Transaction getTransactionById(Long id);
 
-
 }
