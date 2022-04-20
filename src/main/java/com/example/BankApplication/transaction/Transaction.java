@@ -1,8 +1,15 @@
 package com.example.BankApplication.transaction;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "dbtransaction")
+
 public class Transaction {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private Long id;
     private Long sourceaccount;
@@ -60,5 +67,17 @@ public class Transaction {
 
     public void setUserid(Long userid) {
         this.userid = userid;
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id=" + id +
+                ", sourceaccount=" + sourceaccount +
+                ", destinationaccount=" + destinationaccount +
+                ", amount=" + amount +
+                ", createdat=" + createdat +
+                ", userid=" + userid +
+                '}';
     }
 }

@@ -40,7 +40,7 @@ public class AccountController {
     public ResponseEntity<Object> listAccountsById(@RequestHeader(value = "Authorization") String token,
                                                    @PathVariable("accountId") Long accountId) throws SQLException {
         try {
-            Account listAccountId = accountService.listAccountById(token,accountId);
+            Account listAccountId = accountService.listAccountByUserIdAndId(token,accountId);
             return ResponseEntity.status(HttpStatus.OK).body(listAccountId);
         }catch (ValidationIdAccountException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

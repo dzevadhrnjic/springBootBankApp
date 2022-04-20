@@ -7,9 +7,9 @@ import javax.persistence.*;
 import java.util.Date;
 
 
-
 @Entity
 @Table(name = "dbuser") // ovako mapiras izmedju klase u Javi i tabele u SQL-u
+
 public class User {
 
     @Id

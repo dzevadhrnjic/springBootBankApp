@@ -28,7 +28,7 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.OK).body(listTransaction);
         }catch (InvalidTokenException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }catch (ValidationIdAccountException e){
+        }catch (ValidationIdTransaction e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
