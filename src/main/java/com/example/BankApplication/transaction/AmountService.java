@@ -22,7 +22,7 @@ public class AmountService {
         Double sumOfSource = transactionRepository.sourceAccountBalance(accountId);
 
         if (sumOfSource == null) {
-            throw new ValidationIdTransaction("No source account for that id");
+            throw new ValidationIdTransaction("No source account with that id");
         }
 
         return sumOfSource;
@@ -34,14 +34,14 @@ public class AmountService {
         Double sumOfDestination = transactionRepository.destinationAccountBalance(accountId);
 
         if (sumOfDestination == null) {
-            throw new ValidationIdTransaction("No destination account for that id");
+            throw new ValidationIdTransaction("No destination account with that id");
         }
 
         return sumOfDestination;
 
     }
 
-    public Balance balance(String token, Long accountId)  {
+    public Balance balance(String token, Long accountId) {
 
         accountService.listAccountByUserIdAndId(token, accountId);
 
