@@ -25,7 +25,6 @@ public class TransactionService {
     TransactionRepository transactionRepository;
 
 
-
     public List<Transaction> listTransactionsByUserId(String token) throws SQLException {
 
         Long userId = tokenUtil.verifyJwt(token);

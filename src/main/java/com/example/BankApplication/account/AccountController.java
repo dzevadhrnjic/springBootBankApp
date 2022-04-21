@@ -29,9 +29,9 @@ public class AccountController {
         try {
             List<Account> listAccounts = accountService.listAccountsByUserId(token);
             return ResponseEntity.status(HttpStatus.OK).body(listAccounts);
-        }catch (InvalidTokenException e) {
+        } catch (InvalidTokenException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }catch (UserIdException e){
+        } catch (UserIdException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
@@ -40,20 +40,20 @@ public class AccountController {
     public ResponseEntity<Object> listAccountsById(@RequestHeader(value = "Authorization") String token,
                                                    @PathVariable("accountId") Long accountId) throws SQLException {
         try {
-            Account listAccountId = accountService.listAccountByUserIdAndId(token,accountId);
+            Account listAccountId = accountService.listAccountByUserIdAndId(token, accountId);
             return ResponseEntity.status(HttpStatus.OK).body(listAccountId);
-        }catch (ValidationIdAccountException e){
+        } catch (ValidationIdAccountException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @GetMapping(path = "{accountId}/{balance}")
     public ResponseEntity<Object> balance(@RequestHeader(value = "Authorization") String token,
-                                          @PathVariable("accountId") Long accountId)throws SQLException{
+                                          @PathVariable("accountId") Long accountId) throws SQLException {
         try {
-            Balance balanceOfAccounts = amountService.balance(token,accountId);
+            Balance balanceOfAccounts = amountService.balance(token, accountId);
             return ResponseEntity.status(HttpStatus.OK).body(balanceOfAccounts);
-        }catch (ValidationIdAccountException e){
+        } catch (ValidationIdAccountException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
@@ -63,35 +63,35 @@ public class AccountController {
         try {
             Account savedAccount = accountService.createAccount(account);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedAccount);
-        }catch (ValidationAccountException e){
+        } catch (ValidationAccountException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }catch(ValidationIdException e){
+        } catch (ValidationIdException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @DeleteMapping(path = "{accountId}")
     public ResponseEntity<Object> deleteAccount(@RequestHeader(value = "Authorization") String token,
-            @PathVariable("accountId") Long accountId) throws SQLException{
+                                                @PathVariable("accountId") Long accountId) throws SQLException {
         try {
             accountService.deleteAccount(token, accountId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(accountId);
-        }catch (ValidationIdAccountException e){
+        } catch (ValidationIdAccountException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }catch (InvalidTokenException e){
+        } catch (InvalidTokenException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @PutMapping(path = "{accountId}")
     public ResponseEntity<Object> updateAccount(@RequestHeader(value = "Authorization") String token,
-            @PathVariable("accountId") Long accountId, @RequestBody Account account) throws SQLException{
+                                                @PathVariable("accountId") Long accountId, @RequestBody Account account) throws SQLException {
         try {
             Account updateAccount = accountService.updateAccount(token, accountId, account);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(updateAccount);
-        }catch (ValidationAccountException | InvalidTokenException e){
+        } catch (ValidationAccountException | InvalidTokenException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }catch (ValidationIdAccountException e){
+        } catch (ValidationIdAccountException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }

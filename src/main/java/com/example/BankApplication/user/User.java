@@ -6,9 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 import java.util.Date;
 
-
 @Entity
-@Table(name = "dbuser") // ovako mapiras izmedju klase u Javi i tabele u SQL-u
+@Table(name = "dbuser")
 
 public class User {
 

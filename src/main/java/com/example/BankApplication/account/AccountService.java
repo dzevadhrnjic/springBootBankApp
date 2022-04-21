@@ -18,14 +18,14 @@ public class AccountService {
 
     @Autowired
     AccountRepository accountRepository;
-    
-    public List<Account> listAccountsByUserId(String token){
+
+    public List<Account> listAccountsByUserId(String token) {
 
         Long userId = tokenUtil.verifyJwt(token);
 
         List<Account> account = accountRepository.getAccountByUserId(userId);
 
-        if (account == null){
+        if (account == null) {
             throw new ValidationIdAccountException("No account for that userId");
         }
 
@@ -33,30 +33,30 @@ public class AccountService {
 
     }
 
-        public Account listAccountByUserIdAndId(String token, Long accountId) {
+    public Account listAccountByUserIdAndId(String token, Long accountId) {
 
-                Long userId = tokenUtil.verifyJwt(token);
-                Account account = accountRepository.getAccountByUserIdAndUserId(userId, accountId);
+        Long userId = tokenUtil.verifyJwt(token);
+        Account account = accountRepository.getAccountByUserIdAndUserId(userId, accountId);
 
-                if (account == null){
-                    throw new ValidationIdAccountException("No account with that id");
-                }
-
-                return account;
-
-        }
-
-        public Account listAccountId(Long accountId) {
-
-        Account account = accountRepository.getAccountId(accountId);
-
-        if (account == null){
+        if (account == null) {
             throw new ValidationIdAccountException("No account with that id");
         }
 
-             return account;
+        return account;
 
+    }
+
+    public Account listAccountId(Long accountId) {
+
+        Account account = accountRepository.getAccountId(accountId);
+
+        if (account == null) {
+            throw new ValidationIdAccountException("No account with that id");
         }
+
+        return account;
+
+    }
 
     public Account createAccount(Account account) throws SQLException {
 
@@ -71,18 +71,19 @@ public class AccountService {
     }
 
     @Transactional
-    public void deleteAccount(String token, Long accountId){
+    public void deleteAccount(String token, Long accountId) {
 
-        listAccountByUserIdAndId(token,accountId);
+        listAccountByUserIdAndId(token, accountId);
         Long idAccount = tokenUtil.verifyJwt(token);
 
-        accountRepository.deleteAccount(accountId,idAccount);
+        accountRepository.deleteAccount(accountId, idAccount);
 
     }
-    public Account updateAccount(String token, Long accountId, Account account) throws SQLException{
+
+    public Account updateAccount(String token, Long accountId, Account account) throws SQLException {
 
         Long userId = tokenUtil.verifyJwt(token);
-        listAccountByUserIdAndId(token,accountId);
+        listAccountByUserIdAndId(token, accountId);
         AccountValidationService.accountFieldsValidation(account);
 
         LocalDate localDate = LocalDate.now();

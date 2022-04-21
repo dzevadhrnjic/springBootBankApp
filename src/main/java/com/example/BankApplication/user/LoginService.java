@@ -23,7 +23,7 @@ public class LoginService {
 
         if (loginUser == null) {
             throw new InvalidEmailOrPasswordException("Invalid email or password, try again");
-        }else {
+        } else {
             Long userId = loginUser.getId();
             accessToken.setAccessToken(tokenUtil.jwt(userId));
         }

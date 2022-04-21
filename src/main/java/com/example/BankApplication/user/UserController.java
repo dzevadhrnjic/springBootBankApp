@@ -24,7 +24,7 @@ public class UserController {
     public ResponseEntity<Object> listUsers() throws SQLException {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(userService.listUsers());
-        }catch (ValidationIdException e){
+        } catch (ValidationIdException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
@@ -50,11 +50,11 @@ public class UserController {
     }
 
     @PostMapping(path = "login")
-    public ResponseEntity<Object> userLogin(@RequestBody UserLogin userLogin)throws SQLException{
+    public ResponseEntity<Object> userLogin(@RequestBody UserLogin userLogin) throws SQLException {
         try {
             AccessToken loginUser = loginService.loginUser(userLogin);
             return ResponseEntity.status(HttpStatus.CREATED).body(loginUser);
-        }catch (InvalidEmailOrPasswordException e){
+        } catch (InvalidEmailOrPasswordException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -66,21 +66,21 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userId);
         } catch (ValidationIdException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }catch (InvalidTokenException e){
+        } catch (InvalidTokenException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @PutMapping(path = "{userId}")
     public ResponseEntity<Object> updateUser(
-                                             @PathVariable("userId") Long userId,
-                                             @RequestBody User user) throws SQLException {
+            @PathVariable("userId") Long userId,
+            @RequestBody User user) throws SQLException {
         try {
-            User updatedUser =userService.updateUser(userId, user);
+            User updatedUser = userService.updateUser(userId, user);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(updatedUser);
         } catch (ValidationException | InvalidTokenException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }  catch (ValidationIdException e){
+        } catch (ValidationIdException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }

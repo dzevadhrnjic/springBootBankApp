@@ -7,7 +7,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class TokenUtil {
 
-    public  String jwt(Long userId) {
+    public String jwt(Long userId) {
 
         Algorithm algorithm = Algorithm.HMAC512("secret");
         String token = JWT.create()
@@ -18,7 +18,7 @@ public class TokenUtil {
         return token;
     }
 
-    public Long verifyJwt(String token){
+    public Long verifyJwt(String token) {
 
         Algorithm algorithm = Algorithm.HMAC512("secret");
 

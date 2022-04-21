@@ -2,8 +2,6 @@ package com.example.BankApplication.user;
 
 public class AccessToken {
 
-    TokenUtil tokenUtil = new TokenUtil();
-
     private String accessToken;
 
     public AccessToken(String jwt) {

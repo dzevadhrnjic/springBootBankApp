@@ -25,7 +25,7 @@ public class UserService {
 
         User user = userRepository.getUserById(userId);
 
-        if (user == null){
+        if (user == null) {
             throw new ValidationIdException("Couldn't find user with that id");
         }
 
