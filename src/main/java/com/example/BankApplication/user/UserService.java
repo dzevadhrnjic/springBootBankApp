@@ -15,6 +15,9 @@ public class UserService {
     TokenUtil tokenUtil = new TokenUtil();
 
     @Autowired
+    EmailService emailService;
+
+    @Autowired
     UserRepository userRepository;
 
     public List<User> listUsers() {
@@ -41,6 +44,10 @@ public class UserService {
         user.setPassword(hashUtils.generateHash(user.getPassword()));
 
         userRepository.save(user);
+
+        emailService.sendEmail(user.getEmail(),
+                                "User created",
+                                "User " + user.getFirstname() + ", welcome to bank application");
 
         return user;
     }

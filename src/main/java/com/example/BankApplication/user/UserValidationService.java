@@ -71,8 +71,8 @@ public class UserValidationService {
             throw new ValidationException("Can't be empty, email field is required");
         } else if (user.getEmail().equals(" ")) {
             throw new ValidationException("Can't be empty space, email field is required");
-        } else if (user.getEmail().length() > 20) {
-            throw new ValidationException("Email is too long, maximum is 20 characters");
+        } else if (user.getEmail().length() > 30) {
+            throw new ValidationException("Email is too long, maximum is 30 characters");
         }
     }
 }
