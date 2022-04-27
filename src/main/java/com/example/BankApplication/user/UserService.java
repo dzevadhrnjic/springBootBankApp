@@ -1,5 +1,8 @@
 package com.example.BankApplication.user;
 
+import com.example.BankApplication.Verification.EmailVerificationRepository;
+import com.example.BankApplication.Verification.Verification;
+import com.example.BankApplication.Verification.VerifyEmail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +16,13 @@ public class UserService {
 
     HashUtils hashUtils = new HashUtils();
     TokenUtil tokenUtil = new TokenUtil();
+    Verification verification = new Verification();
+
+    @Autowired
+    EmailVerificationRepository emailVerificationRepository;
+
+    @Autowired
+    VerifyEmail verifyEmail;
 
     @Autowired
     EmailService emailService;
@@ -35,6 +45,17 @@ public class UserService {
         return user;
     }
 
+//    public User listUserByEmail(String email){
+//
+//        User user = userRepository.getUserByEmail(email);
+//
+//        if (user == null){
+//            throw new ValidationException("Couldn't find user");
+//        }
+//
+//        return user;
+//    }
+
     public User createUser(User user) {
 
         UserValidationService.userFieldsValidation(user);
@@ -45,9 +66,16 @@ public class UserService {
 
         userRepository.save(user);
 
-        emailService.sendEmail(user.getEmail(),
-                                "User created",
-                                "User " + user.getFirstname() + ", welcome to bank application");
+        String code = emailService.getRandomNumbers();
+
+        emailService.sendEmail(user.getEmail(), code,
+                            "User " + user.getFirstname() + ", welcome to bank application");
+
+        verification.setEmail(user.getEmail());
+        verification.setCode(code);
+
+        emailVerificationRepository.save(verification);
+
 
         return user;
     }
