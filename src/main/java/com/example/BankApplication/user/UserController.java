@@ -63,24 +63,13 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-//
-//    @GetMapping(path = "email")
-//    public ResponseEntity<Object> mail (@RequestBody Verification verification){
-//        try {
-//            Verification email = verifyEmail.verify(verification);
-//            return ResponseEntity.status(HttpStatus.OK).body(email);
-//        }catch (EmailVerificationExcpetion e){
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-//        }
-//
-//    }
 
-    @GetMapping(path = "verifyEmail")
-    public ResponseEntity<Object> verifyYourMail(@RequestBody Verification verification){
-        try{
-            Verification email = verifyEmail.emailVerify( verification);
+    @PostMapping(path = "verifyEmail")
+    public ResponseEntity<Object> verifyYourMail(@RequestBody Verification verification) {
+        try {
+            Verification email = verifyEmail.emailVerify(verification);
             return ResponseEntity.status(HttpStatus.OK).body(email);
-        }catch (EmailVerificationException e){
+        } catch (EmailVerificationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

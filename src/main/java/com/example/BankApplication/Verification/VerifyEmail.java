@@ -17,24 +17,24 @@ public class VerifyEmail {
 
     public Verification emailVerify(Verification verification) {
 
-        Verification veificationMail = emailVerificationRepository.getEmailAndCode(verification.getEmail(),
+        Verification verificationMail = emailVerificationRepository.getEmailAndCode(verification.getEmail(),
                 verification.getCode());
         User userByMail = userRepository.getUserByEmail(verification.getEmail());
 
-        if (veificationMail == null) {
+        if (verificationMail == null) {
             throw new EmailVerificationException("Couldn't verify, wrong email or confirmation code");
         }
 
-        veificationMail.setEmail(veificationMail.getEmail());
-        veificationMail.setCode(veificationMail.getCode());
+        verificationMail.setEmail(verificationMail.getEmail());
+        verificationMail.setCode(verificationMail.getCode());
 
         userByMail.setVerifyEmail(true);
         userRepository.save(userByMail);
 
-        emailVerificationRepository.save(veificationMail);
+        emailVerificationRepository.save(verificationMail);
 
 
-        return veificationMail;
+        return verificationMail;
 
     }
 
