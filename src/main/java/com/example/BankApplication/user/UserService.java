@@ -44,18 +44,7 @@ public class UserService {
 
         return user;
     }
-
-//    public User listUserByEmail(String email){
-//
-//        User user = userRepository.getUserByEmail(email);
-//
-//        if (user == null){
-//            throw new ValidationException("Couldn't find user");
-//        }
-//
-//        return user;
-//    }
-
+    
     public User createUser(User user) {
 
         UserValidationService.userFieldsValidation(user);
@@ -69,7 +58,7 @@ public class UserService {
         String code = emailService.getRandomNumbers();
 
         emailService.sendEmail(user.getEmail(), code,
-                            "User " + user.getFirstname() + ", welcome to bank application");
+                "User " + user.getFirstname() + ", welcome to bank application");
 
         verification.setEmail(user.getEmail());
         verification.setCode(code);
