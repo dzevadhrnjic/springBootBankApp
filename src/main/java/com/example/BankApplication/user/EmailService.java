@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import java.util.Random;
 
 @Service
-
 public class EmailService  {
 
     private static final String NOREPLY_ADDRESS = "noreply@gmail.com";

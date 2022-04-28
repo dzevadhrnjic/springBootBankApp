@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import java.sql.SQLException;
 
 @Service
-
 public class TransactionValidationService {
 
     private static AmountService amountService;
@@ -19,7 +18,6 @@ public class TransactionValidationService {
         sourceAccountValidation(token, accountId, transaction);
 
     }
-
 
     public static void amountValidation(Transaction transaction) {
         if (transaction.getAmount() == null) {

@@ -24,7 +24,6 @@ public class User {
     private String password;
     private boolean verifyemail;
 
-
     public Long getId() {
         return id;
     }

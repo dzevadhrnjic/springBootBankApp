@@ -1,19 +1,16 @@
-package com.example.BankApplication.Verification;
+package com.example.BankApplication.verification;
 
 import javax.persistence.*;
 
 @Entity
 @Table
-
 public class Verification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
     private String email;
     private String code;
-
     public Verification() {
     }
 

@@ -1,4 +1,4 @@
-package com.example.BankApplication.Verification;
+package com.example.BankApplication.verification;
 
 import com.example.BankApplication.user.User;
 import com.example.BankApplication.user.UserRepository;
@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-
 public class VerifyEmail {
 
     @Autowired
@@ -33,9 +32,6 @@ public class VerifyEmail {
 
         emailVerificationRepository.save(verificationMail);
 
-
         return verificationMail;
-
     }
-
 }

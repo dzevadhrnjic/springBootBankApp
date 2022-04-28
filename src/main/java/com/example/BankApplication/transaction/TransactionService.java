@@ -24,7 +24,6 @@ public class TransactionService {
     @Autowired
     TransactionRepository transactionRepository;
 
-
     public List<Transaction> listTransactionsByUserId(String token) throws SQLException {
 
         Long userId = tokenUtil.verifyJwt(token);
@@ -36,9 +35,7 @@ public class TransactionService {
         }
 
         return transaction;
-
     }
-
 
     public Transaction listTransactionById(Long transactionId) throws SQLException {
 
@@ -49,9 +46,7 @@ public class TransactionService {
         }
 
         return transaction;
-
     }
-
 
     public Transaction createTransaction(String token, Transaction transaction) throws SQLException {
 
@@ -61,7 +56,6 @@ public class TransactionService {
         accountService.listAccountByUserIdAndId(token, transaction.getSourceaccount());
         accountService.listAccountId(transaction.getDestinationaccount());
 
-
         LocalDate localDate = LocalDate.now();
         transaction.setCreatedat(Date.valueOf(localDate));
         transaction.setUserid(userId);
@@ -69,7 +63,6 @@ public class TransactionService {
         transactionRepository.save(transaction);
 
         return transaction;
-
     }
 
     public Transaction reverseTransaction(Long transactionId) throws SQLException {
@@ -88,7 +81,6 @@ public class TransactionService {
         transactionRepository.save(reverse);
 
         return reverse;
-
     }
 }
 

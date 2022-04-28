@@ -1,4 +1,4 @@
-package com.example.BankApplication.Verification;
+package com.example.BankApplication.verification;
 
 public class EmailVerificationException extends RuntimeException {
 

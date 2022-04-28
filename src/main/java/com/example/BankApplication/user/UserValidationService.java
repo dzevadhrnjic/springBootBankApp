@@ -2,7 +2,6 @@ package com.example.BankApplication.user;
 
 public class UserValidationService {
 
-
     public static void userFieldsValidation(User user) {
 
         userFirstNameValidation(user);

@@ -15,8 +15,6 @@ import java.util.List;
 public class TransactionController {
 
     TransactionService transactionService;
-    AmountService amountService;
-
     public TransactionController(TransactionService transactionService) {
         this.transactionService = transactionService;
     }
@@ -57,7 +55,7 @@ public class TransactionController {
     }
 
     @PostMapping(path = "{transactionId}/{reverse}")
-    public ResponseEntity<Object> reverseTransaction(@PathVariable("transactionId") Long transactionId, Transaction transaction) throws SQLException {
+    public ResponseEntity<Object> reverseTransaction(@PathVariable("transactionId") Long transactionId) throws SQLException {
         try {
             Transaction transactionReverse = transactionService.reverseTransaction(transactionId);
             return ResponseEntity.status(HttpStatus.OK).body(transactionReverse);

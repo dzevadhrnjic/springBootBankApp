@@ -1,8 +1,8 @@
 package com.example.BankApplication.user;
 
-import com.example.BankApplication.Verification.EmailVerificationException;
-import com.example.BankApplication.Verification.Verification;
-import com.example.BankApplication.Verification.VerifyEmail;
+import com.example.BankApplication.verification.EmailVerificationException;
+import com.example.BankApplication.verification.Verification;
+import com.example.BankApplication.verification.VerifyEmail;
 import com.example.BankApplication.account.InvalidTokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
