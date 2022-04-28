@@ -73,7 +73,6 @@ public class AccountService {
         Long idAccount = tokenUtil.verifyJwt(token);
 
         accountRepository.deleteAccount(accountId, idAccount);
-
     }
 
     public Account updateAccount(String token, Long accountId, Account account) throws SQLException {
