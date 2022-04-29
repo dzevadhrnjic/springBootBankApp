@@ -5,8 +5,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-@Service
+import java.util.Random;
 
+@Service
 public class EmailService  {
 
     private static final String NOREPLY_ADDRESS = "noreply@gmail.com";
@@ -24,5 +25,12 @@ public class EmailService  {
         javaMailSender.send(message);
 
         System.out.println("Mail sent successfully");
+    }
+
+    public String getRandomNumbers(){
+        Random random = new Random();
+        int number = random.nextInt(999999);
+
+        return String.format("%06d", number);
     }
 }

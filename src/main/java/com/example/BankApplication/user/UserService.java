@@ -1,5 +1,7 @@
 package com.example.BankApplication.user;
 
+import com.example.BankApplication.verification.EmailVerificationRepository;
+import com.example.BankApplication.verification.Verification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,11 +10,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-
 public class UserService {
 
     HashUtils hashUtils = new HashUtils();
-    TokenUtil tokenUtil = new TokenUtil();
+    Verification verification = new Verification();
+
+    @Autowired
+    EmailVerificationRepository emailVerificationRepository;
 
     @Autowired
     EmailService emailService;
@@ -34,7 +38,7 @@ public class UserService {
 
         return user;
     }
-
+    
     public User createUser(User user) {
 
         UserValidationService.userFieldsValidation(user);
@@ -45,9 +49,15 @@ public class UserService {
 
         userRepository.save(user);
 
-        emailService.sendEmail(user.getEmail(),
-                                "User created",
-                                "User " + user.getFirstname() + ", welcome to bank application");
+        String code = emailService.getRandomNumbers();
+
+        emailService.sendEmail(user.getEmail(), code,
+                "User " + user.getFirstname() + ", welcome to bank application");
+
+        verification.setEmail(user.getEmail());
+        verification.setCode(code);
+
+        emailVerificationRepository.save(verification);
 
         return user;
     }
@@ -57,7 +67,6 @@ public class UserService {
         listUserById(userId);
 
         userRepository.deleteById(userId);
-
     }
 
     public User updateUser(Long userId, User user) {

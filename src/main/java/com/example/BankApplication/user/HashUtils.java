@@ -6,7 +6,6 @@ import java.security.SecureRandom;
 
 public class HashUtils {
 
-
     public String generateHash(String password) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
@@ -20,7 +19,6 @@ public class HashUtils {
     }
 
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
-
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
@@ -30,7 +28,6 @@ public class HashUtils {
         }
         return new String(hexChars);
     }
-
     public static byte[] createSalt() {
         byte[] bytes = new byte[20];
         SecureRandom random = new SecureRandom();

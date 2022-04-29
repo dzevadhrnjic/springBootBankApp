@@ -22,7 +22,7 @@ public class User {
     private String email;
     private Date createdat;
     private String password;
-
+    private boolean verifyemail;
 
     public Long getId() {
         return id;
@@ -88,6 +88,14 @@ public class User {
     @JsonProperty
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isVerifyEmail() {
+        return verifyemail;
+    }
+
+    public void setVerifyEmail(boolean verifyemail) {
+        this.verifyemail = verifyemail;
     }
 
     @Override

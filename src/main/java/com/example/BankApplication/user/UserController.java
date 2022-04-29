@@ -1,5 +1,8 @@
 package com.example.BankApplication.user;
 
+import com.example.BankApplication.verification.EmailVerificationException;
+import com.example.BankApplication.verification.Verification;
+import com.example.BankApplication.verification.VerifyEmail;
 import com.example.BankApplication.account.InvalidTokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +17,12 @@ public class UserController {
 
     private final UserService userService;
     private final LoginService loginService;
+    private final VerifyEmail verifyEmail;
 
-    public UserController(UserService userService, LoginService loginService) {
+    public UserController(UserService userService, LoginService loginService, VerifyEmail verifyEmail) {
         this.userService = userService;
         this.loginService = loginService;
+        this.verifyEmail = verifyEmail;
     }
 
     @GetMapping
@@ -55,6 +60,16 @@ public class UserController {
             AccessToken loginUser = loginService.loginUser(userLogin);
             return ResponseEntity.status(HttpStatus.CREATED).body(loginUser);
         } catch (InvalidEmailOrPasswordException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping(path = "verifyEmail")
+    public ResponseEntity<Object> verifyYourMail(@RequestBody Verification verification) {
+        try {
+            Verification email = verifyEmail.emailVerify(verification);
+            return ResponseEntity.status(HttpStatus.OK).body(email);
+        } catch (EmailVerificationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

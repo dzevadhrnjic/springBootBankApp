@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-
 public class AccountService {
 
     TokenUtil tokenUtil = new TokenUtil();
@@ -30,7 +29,6 @@ public class AccountService {
         }
 
         return account;
-
     }
 
     public Account listAccountByUserIdAndId(String token, Long accountId) {
@@ -43,7 +41,6 @@ public class AccountService {
         }
 
         return account;
-
     }
 
     public Account listAccountId(Long accountId) {
@@ -55,7 +52,6 @@ public class AccountService {
         }
 
         return account;
-
     }
 
     public Account createAccount(Account account) throws SQLException {
@@ -77,7 +73,6 @@ public class AccountService {
         Long idAccount = tokenUtil.verifyJwt(token);
 
         accountRepository.deleteAccount(accountId, idAccount);
-
     }
 
     public Account updateAccount(String token, Long accountId, Account account) throws SQLException {
@@ -94,6 +89,5 @@ public class AccountService {
         accountRepository.save(account);
 
         return account;
-
     }
 }

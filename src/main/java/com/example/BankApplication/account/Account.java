@@ -10,13 +10,11 @@ public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
     private String name;
     private Double initialbalance;
     private Long userid;
     private Date createdat;
-
     public Account() {
     }
 

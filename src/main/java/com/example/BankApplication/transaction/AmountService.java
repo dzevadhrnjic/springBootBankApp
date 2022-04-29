@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-
 public class AmountService {
 
     private AccountService accountService;
@@ -28,7 +27,6 @@ public class AmountService {
         return sumOfSource;
     }
 
-
     public Double accountOutcome(Long accountId) {
 
         Double sumOfDestination = transactionRepository.destinationAccountBalance(accountId);
@@ -38,7 +36,6 @@ public class AmountService {
         }
 
         return sumOfDestination;
-
     }
 
     public Balance balance(String token, Long accountId) {
@@ -55,6 +52,5 @@ public class AmountService {
         balance.setBalance(result);
 
         return balance;
-
     }
 }

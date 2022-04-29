@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-
 public class LoginService {
 
     HashUtils hashUtils = new HashUtils();
@@ -12,7 +11,6 @@ public class LoginService {
 
     @Autowired
     UserRepository userRepository;
-
 
     public AccessToken loginUser(UserLogin userLogin) {
 
@@ -28,6 +26,5 @@ public class LoginService {
             accessToken.setAccessToken(tokenUtil.jwt(userId));
         }
         return accessToken;
-
     }
 }
