@@ -107,7 +107,7 @@ public class AccountController {
         }
     }
 
-    @GetMapping(path = "{accountId}/{statements}")
+    @GetMapping(path = "{statementPdf}/{accountId}/{statements}")
     public ResponseEntity<Object> createPdfFile(@RequestHeader(value = "Authorization") String  token,
                                                 @PathVariable("accountId") Long accountId)
                                                 throws MessagingException, IOException {
