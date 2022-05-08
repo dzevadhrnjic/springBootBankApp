@@ -9,7 +9,6 @@ public class AccountValidationService {
 
         accountNameValidation(account);
         accountInitialBalanceValidation(account);
-
     }
 
     public static void accountNameValidation(Account account) {

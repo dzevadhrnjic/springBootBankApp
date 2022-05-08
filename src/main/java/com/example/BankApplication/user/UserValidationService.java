@@ -9,7 +9,6 @@ public class UserValidationService {
         userAddressValidation(user);
         userPhoneNumberValidation(user);
         userEmailValidation(user);
-
     }
 
     public static void userFirstNameValidation(User user) {

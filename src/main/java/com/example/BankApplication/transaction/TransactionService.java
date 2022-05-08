@@ -1,12 +1,13 @@
 package com.example.BankApplication.transaction;
 
 import com.example.BankApplication.account.AccountService;
+import com.example.BankApplication.account.InvalidTokenException;
 import com.example.BankApplication.user.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.*;
-import java.time.LocalDate;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -56,8 +57,12 @@ public class TransactionService {
         accountService.listAccountByUserIdAndId(token, transaction.getSourceaccount());
         accountService.listAccountId(transaction.getDestinationaccount());
 
-        LocalDate localDate = LocalDate.now();
-        transaction.setCreatedat(Date.valueOf(localDate));
+        if (userId == null){
+            throw new InvalidTokenException("Couldn't create transaction, unauthorized user");
+        }
+
+        LocalDateTime localDateAndTime = LocalDateTime.now();
+        transaction.setCreatedat(localDateAndTime);
         transaction.setUserid(userId);
 
         transactionRepository.save(transaction);
@@ -74,8 +79,8 @@ public class TransactionService {
         reverse.setSourceaccount(transaction.getDestinationaccount());
         reverse.setDestinationaccount(transaction.getSourceaccount());
         reverse.setAmount(transaction.getAmount());
-        LocalDate localDate = LocalDate.now();
-        reverse.setCreatedat(Date.valueOf(localDate));
+        LocalDateTime localDateAndTime = LocalDateTime.now();
+        transaction.setCreatedat(localDateAndTime);
         reverse.setUserid(transaction.getUserid());
 
         transactionRepository.save(reverse);

@@ -5,8 +5,9 @@ import com.example.BankApplication.verification.Verification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.time.LocalDate;
+import javax.mail.MessagingException;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -38,13 +39,13 @@ public class UserService {
 
         return user;
     }
-    
-    public User createUser(User user) {
+
+    public User createUser(User user) throws MessagingException, IOException {
 
         UserValidationService.userFieldsValidation(user);
 
-        LocalDate localDate = LocalDate.now();
-        user.setCreatedat(Date.valueOf(localDate));
+        LocalDateTime localDateAndTime = LocalDateTime.now();
+        user.setCreatedat(localDateAndTime);
         user.setPassword(hashUtils.generateHash(user.getPassword()));
 
         userRepository.save(user);
@@ -74,8 +75,8 @@ public class UserService {
         listUserById(userId);
         UserValidationService.userFieldsValidation(user);
 
-        LocalDate localDate = LocalDate.now();
-        user.setCreatedat(Date.valueOf(localDate));
+        LocalDateTime localDateAndTime = LocalDateTime.now();
+        user.setCreatedat(localDateAndTime);
         user.setPassword(hashUtils.generateHash(user.getPassword()));
         user.setId(userId);
 

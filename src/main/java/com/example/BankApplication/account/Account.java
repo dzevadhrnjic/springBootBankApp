@@ -1,7 +1,7 @@
 package com.example.BankApplication.account;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "account")
@@ -14,7 +14,7 @@ public class Account {
     private String name;
     private Double initialbalance;
     private Long userid;
-    private Date createdat;
+    private LocalDateTime createdat;
     public Account() {
     }
 
@@ -50,11 +50,11 @@ public class Account {
         this.userid = userid;
     }
 
-    public Date getCreatedat() {
+    public LocalDateTime getCreatedat() {
         return createdat;
     }
 
-    public void setCreatedat(Date createdat) {
+    public void setCreatedat(LocalDateTime createdat) {
         this.createdat = createdat;
     }
 
