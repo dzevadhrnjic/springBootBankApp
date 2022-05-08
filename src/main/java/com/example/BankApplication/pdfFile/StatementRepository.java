@@ -10,7 +10,8 @@ import java.util.List;
 
 public interface StatementRepository extends JpaRepository<StatementPdf, Long> {
 
-    @Query(value = "select dbtransaction.amount, dbtransaction.id, dbuser.firstname || ' ' || dbuser.lastname AS sendername, dbtransaction.createdat, dbuser .email, " +
+    @Query(value = "select dbtransaction.amount, dbtransaction.id, dbuser.firstname || ' ' || dbuser.lastname AS sendername," +
+            " dbtransaction.createdat, dbuser .email, " +
             "(select userdb.firstname || ' ' || userdb.lastname " +
             "from dbtransaction tr " +
             "inner join account acc on acc.id = dbtransaction.destinationaccount " +

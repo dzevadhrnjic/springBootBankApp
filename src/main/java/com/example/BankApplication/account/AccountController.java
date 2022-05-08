@@ -3,6 +3,7 @@ package com.example.BankApplication.account;
 
 import com.example.BankApplication.pdfFile.GeneratePdf;
 import com.example.BankApplication.transaction.AmountService;
+import com.example.BankApplication.transaction.Balance;
 import com.example.BankApplication.user.EmailNotVerifiedException;
 import com.example.BankApplication.user.ValidationIdException;
 import com.itextpdf.text.DocumentException;
@@ -55,16 +56,16 @@ public class AccountController {
         }
     }
 
-//    @GetMapping(path = "{accountId}/{balance}")
-//    public ResponseEntity<Object> balance(@RequestHeader(value = "Authorization") String token,
-//                                          @PathVariable("accountId") Long accountId) throws SQLException {
-//        try {
-//            Balance balanceOfAccounts = amountService.balance(token, accountId);
-//            return ResponseEntity.status(HttpStatus.OK).body(balanceOfAccounts);
-//        } catch (ValidationIdAccountException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-//        }
-//    }
+    @GetMapping(path = "{accountId}/{balance}")
+    public ResponseEntity<Object> balance(@RequestHeader(value = "Authorization") String token,
+                                          @PathVariable("accountId") Long accountId) throws SQLException {
+        try {
+            Balance balanceOfAccounts = amountService.balance(token, accountId);
+            return ResponseEntity.status(HttpStatus.OK).body(balanceOfAccounts);
+        } catch (ValidationIdAccountException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 
     @PostMapping
     public ResponseEntity<Object> createAccount(@RequestHeader(value = "Authorization") String token,
