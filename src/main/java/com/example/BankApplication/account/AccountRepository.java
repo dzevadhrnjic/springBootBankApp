@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Query("select a from Account a where a.userid = ?1")

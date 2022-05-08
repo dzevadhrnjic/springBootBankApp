@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "dbuser")
@@ -13,14 +13,13 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
     private String firstname;
     private String lastname;
     private String address;
     private String phonenumber;
     private String email;
-    private Date createdat;
+    private LocalDateTime createdat;
     private String password;
     private boolean verifyemail;
 
@@ -72,11 +71,11 @@ public class User {
         this.email = email;
     }
 
-    public Date getCreatedat() {
+    public LocalDateTime getCreatedat() {
         return createdat;
     }
 
-    public void setCreatedat(Date createdat) {
+    public void setCreatedat(LocalDateTime createdat) {
         this.createdat = createdat;
     }
 

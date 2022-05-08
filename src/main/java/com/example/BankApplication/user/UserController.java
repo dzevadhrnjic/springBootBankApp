@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.sql.SQLException;
 
 @RestController
@@ -51,6 +53,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CREATED).body(user);
         } catch (ValidationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (MessagingException | IOException e) {
+            return null;
         }
     }
 

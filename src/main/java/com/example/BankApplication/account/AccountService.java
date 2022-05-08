@@ -5,9 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.sql.Date;
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -54,12 +53,14 @@ public class AccountService {
         return account;
     }
 
-    public Account createAccount(Account account) throws SQLException {
+    public Account createAccount(String token,Account account) throws SQLException {
 
+        Long userId = tokenUtil.verifyJwt(token);
         AccountValidationService.accountFieldsValidation(account);
 
-        LocalDate localDate = LocalDate.now();
-        account.setCreatedat(Date.valueOf(localDate));
+        LocalDateTime localDateAndTime = LocalDateTime.now();
+        account.setCreatedat(localDateAndTime);
+        account.setUserid(userId);
 
         accountRepository.save(account);
 
@@ -81,8 +82,8 @@ public class AccountService {
         listAccountByUserIdAndId(token, accountId);
         AccountValidationService.accountFieldsValidation(account);
 
-        LocalDate localDate = LocalDate.now();
-        account.setCreatedat(Date.valueOf(localDate));
+        LocalDateTime localDateAndTime = LocalDateTime.now();
+        account.setCreatedat(localDateAndTime);
         account.setId(accountId);
         account.setUserid(userId);
 

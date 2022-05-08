@@ -9,5 +9,4 @@ public interface EmailVerificationRepository extends JpaRepository<Verification,
 
     @Query("select v from Verification v where v.email = ?1 and v.code = ?2")
     Verification getEmailAndCode(String email, String code);
-
 }

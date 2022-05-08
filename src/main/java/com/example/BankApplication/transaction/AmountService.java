@@ -1,6 +1,7 @@
 package com.example.BankApplication.transaction;
 
 import com.example.BankApplication.account.AccountService;
+import com.example.BankApplication.account.ValidationIdAccountException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class AmountService {
         Double sumOfSource = transactionRepository.sourceAccountBalance(accountId);
 
         if (sumOfSource == null) {
-            throw new ValidationIdTransaction("No source account with that id");
+            throw new ValidationIdAccountException("No source account with that id");
         }
 
         return sumOfSource;
@@ -32,7 +33,7 @@ public class AmountService {
         Double sumOfDestination = transactionRepository.destinationAccountBalance(accountId);
 
         if (sumOfDestination == null) {
-            throw new ValidationIdTransaction("No destination account with that id");
+            throw new ValidationIdAccountException("No destination account with that id");
         }
 
         return sumOfDestination;
