@@ -53,7 +53,7 @@ public class GeneratePdf {
 
         createPdfFile(accountId);
 
-        emailService.sendEmailWithAttachment(user.getEmail() + 1, "Statement", "Your statement " +
+        emailService.sendEmailWithAttachment(user.getEmail(), "Statement", "Your statement " +
                                                 user.getFirstname());
 
         return null;
