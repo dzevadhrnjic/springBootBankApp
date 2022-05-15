@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -24,6 +25,20 @@ public class TransactionService {
 
     @Autowired
     TransactionRepository transactionRepository;
+
+    public List<Transaction> listTransactions(String order, Date dateFrom, Date dateTo){
+
+        if (order.equals("ASC") && dateFrom != null && dateTo != null){
+            return transactionRepository.findTransactionsByCreatedAtAsc(dateFrom, dateTo);
+        }else if (order.equals("DESC") && dateFrom != null && dateTo != null){
+            return transactionRepository.findTransactionsByCreatedAtDesc(dateFrom, dateTo);
+        }else if (order.equals("ASC")){
+            return transactionRepository.findAllOrderByAsc();
+        }else {
+            return transactionRepository.findAllOrderByDesc();
+        }
+
+    }
 
     public List<Transaction> listTransactionsByUserId(String token) throws SQLException {
 

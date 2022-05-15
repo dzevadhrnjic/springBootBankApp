@@ -2,11 +2,13 @@ package com.example.BankApplication.transaction;
 
 import com.example.BankApplication.account.InvalidTokenException;
 import com.example.BankApplication.account.ValidationIdAccountException;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -20,6 +22,19 @@ public class TransactionController {
     }
 
     @GetMapping
+    public ResponseEntity<Object> listTransaction(@RequestParam(name = "order", required = false) String order,
+                                                  @DateTimeFormat(pattern = "yyyy-MM-dd")
+                                                  @RequestParam(name = "dateFrom", required = false) Date dateFrom,
+                                                  @DateTimeFormat(pattern = "yyyy-MM-dd")
+                                                  @RequestParam(name = "dateTo", required = false) Date dateTo){
+        try {
+            List<Transaction> transactionsList = transactionService.listTransactions(order, dateFrom, dateTo);
+            return ResponseEntity.status(HttpStatus.OK).body(transactionsList);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    @GetMapping(path = "userTransaction")
     public ResponseEntity<Object> listAccountByUserId(@RequestHeader(value = "Authorization") String token) throws SQLException {
         try {
             List<Transaction> listTransaction = transactionService.listTransactionsByUserId(token);
@@ -31,7 +46,7 @@ public class TransactionController {
         }
     }
 
-    @GetMapping(path = "{transactionId}")
+    @GetMapping(path = "{user}/{transactionId}")
     public ResponseEntity<Object> listTransactionById(@PathVariable("transactionId") Long transactionId) throws SQLException {
         try {
             Transaction listTransactionId = transactionService.listTransactionById(transactionId);

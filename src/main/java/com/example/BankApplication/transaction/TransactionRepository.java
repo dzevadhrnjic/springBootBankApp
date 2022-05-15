@@ -3,13 +3,27 @@ package com.example.BankApplication.transaction;
 import com.example.BankApplication.pdfFile.StatementPdf;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
 
 public interface TransactionRepository extends JpaRepository<Transaction, StatementPdf> {
+
+    @Query(value = "select * from dbtransaction order by createdat asc", nativeQuery = true)
+    List<Transaction> findAllOrderByAsc();
+
+    @Query(value = "select * from dbtransaction order by createdat desc", nativeQuery = true)
+    List<Transaction> findAllOrderByDesc();
+
+    @Query(value = "select * from dbtransaction where createdat between ?1 and ?2 order by createdat asc", nativeQuery = true)
+    List<Transaction> findTransactionsByCreatedAtAsc(@Param("dateFrom") Date dateFrom, @Param("dateTo") Date dateTo);
+
+    @Query(value = "select * from dbtransaction where createdat between ?1 and ?2 order by createdat desc", nativeQuery = true)
+    List<Transaction> findTransactionsByCreatedAtDesc(@Param("dateFrom") Date dateFrom, @Param("dateTo") Date dateTo);
 
     @Query("select t from Transaction t where t.userid = ?1")
     List<Transaction> getTransactionByUserId(Long userId);

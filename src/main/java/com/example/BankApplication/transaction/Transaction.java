@@ -59,6 +59,14 @@ public class Transaction {
         this.createdat = createdat;
     }
 
+    //    public Date getCreatedat() {
+//        return createdat;
+//    }
+//
+//    public void setCreatedat(Date createdat) {
+//        this.createdat = createdat;
+//    }
+
     public void setUserid(Long userid) {
         this.userid = userid;
     }
