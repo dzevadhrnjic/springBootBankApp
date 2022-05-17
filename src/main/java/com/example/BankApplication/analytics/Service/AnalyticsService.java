@@ -16,9 +16,9 @@ public class AnalyticsService {
     @Autowired
     AnalyticsDayRepository analyticsDayRepository;
 
-    public List<? extends Object> analytics(Long id, String order){
+    public List<? extends Object> analytics(Long id, String type){
 
-        if (order.equals("months")) {
+        if (type.equals("months")) {
             return analyticsRepository.analyticsForMonths(id);
         }else {
             return analyticsDayRepository.analyticsForDay(id);

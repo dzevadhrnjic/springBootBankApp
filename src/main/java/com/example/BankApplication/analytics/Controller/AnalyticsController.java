@@ -17,9 +17,9 @@ public class AnalyticsController {
 
     @GetMapping(path = "{id}")
     public ResponseEntity<Object> analyticsList(@PathVariable("id") Long id,
-                                                @RequestParam(value = "order", required = false) String months){
+                                                @RequestParam(value = "type", required = false) String type){
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(analyticsService.analytics(id, months));
+            return ResponseEntity.status(HttpStatus.OK).body(analyticsService.analytics(id, type));
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

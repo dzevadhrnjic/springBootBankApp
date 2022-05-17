@@ -16,4 +16,6 @@ public interface AnalyticsRepository extends JpaRepository<Analytics,Long> {
             "GROUP BY DATE_TRUNC('month',createdat) ", nativeQuery = true)
     List<Analytics> analyticsForMonths(Long id);
 
+    
+
 }
