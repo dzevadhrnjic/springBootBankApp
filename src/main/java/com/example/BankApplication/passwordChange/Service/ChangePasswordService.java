@@ -45,18 +45,20 @@ public class ChangePasswordService {
 
         Long userId = tokenUtil.verifyJwt(token);
         User user = userRepository.getUserById(userId);
-        User password = userRepository.getUserByPassword(hashUtils.generateHash(changePassword.getOldPassword()));
         Verification verification = emailVerificationRepository.getEmailAndCode(user.getEmail(), changePassword.getCode());
 
-        if (verification == null || password == null) {
+        if (verification == null) {
             throw new InvalidEmailOrPasswordException("Invalid code or password, try again");
         }
 
-        user.setPassword(hashUtils.generateHash(changePassword.getNewPassword()));
+        if (!user.getPassword().equals(hashUtils.generateHash(changePassword.getOldPassword()))) {
+            throw new InvalidEmailOrPasswordException("Invalid password, try again");
+        } else {
+            user.setPassword(hashUtils.generateHash(changePassword.getNewPassword()));
 
-        userRepository.save(user);
+            userRepository.save(user);
 
-        return null;
+            return null;
+        }
     }
 }
-
