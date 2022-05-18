@@ -1,8 +1,8 @@
 package com.example.BankApplication.user;
 
 import com.example.BankApplication.account.InvalidTokenException;
-import com.example.BankApplication.passwordChange.Model.ChangePassword;
-import com.example.BankApplication.passwordChange.Service.ChangePasswordService;
+import com.example.BankApplication.changePassword.Model.ChangePassword;
+import com.example.BankApplication.changePassword.Service.ChangePasswordService;
 import com.example.BankApplication.verification.EmailVerificationException;
 import com.example.BankApplication.verification.Verification;
 import com.example.BankApplication.verification.VerifyEmail;
