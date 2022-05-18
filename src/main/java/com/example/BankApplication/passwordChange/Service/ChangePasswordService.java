@@ -23,7 +23,7 @@ public class ChangePasswordService {
     @Autowired
     EmailVerificationRepository emailVerificationRepository;
 
-    public User changePassword(String token) throws Exception {
+    public void changePassword(String token) throws Exception {
 
         Long userId = tokenUtil.verifyJwt(token);
         User user = userRepository.getUserById(userId);
@@ -39,21 +39,20 @@ public class ChangePasswordService {
         verification.setCode(code);
 
         emailVerificationRepository.save(verification);
-
-        return null;
     }
 
     public ChangePassword newPassword(String token, ChangePassword changePassword) {
 
         Long userId = tokenUtil.verifyJwt(token);
         User user = userRepository.getUserById(userId);
+        User password = userRepository.getUserByPassword(hashUtils.generateHash(changePassword.getOldPassword()));
         Verification verification = emailVerificationRepository.getEmailAndCode(user.getEmail(), changePassword.getCode());
 
-        if (verification == null) {
-            throw new InvalidEmailOrPasswordException("Invalid code, try again");
+        if (verification == null || password == null) {
+            throw new InvalidEmailOrPasswordException("Invalid code or password, try again");
         }
 
-        user.setPassword(hashUtils.generateHash(changePassword.getPassword()));
+        user.setPassword(hashUtils.generateHash(changePassword.getNewPassword()));
 
         userRepository.save(user);
 

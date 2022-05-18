@@ -1,12 +1,10 @@
 package com.example.BankApplication.passwordChange.Model;
 
-import javax.persistence.Table;
-
-@Table(name = "dbuser")
 public class ChangePassword {
 
     private String code;
-    private String password;
+    private String oldPassword;
+    private String newPassword;
     public ChangePassword() {
     }
 
@@ -18,11 +16,19 @@ public class ChangePassword {
         this.code = code;
     }
 
-    public String getPassword() {
-        return password;
+    public String getOldPassword() {
+        return oldPassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
 }

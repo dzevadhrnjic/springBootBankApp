@@ -88,8 +88,8 @@ public class UserController {
     @PostMapping(path = "change-password")
     public ResponseEntity<Object> passwordChange(@RequestHeader(value = "Authorization") String token) throws Exception {
         try {
-            User email = changePasswordService.changePassword(token);
-            return ResponseEntity.status(HttpStatus.OK).body(email);
+            changePasswordService.changePassword(token);
+            return ResponseEntity.status(HttpStatus.OK).body(token);
         }catch (ValidationIdException | MessagingException | IOException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
