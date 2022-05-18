@@ -1,4 +1,4 @@
-package com.example.BankApplication.passwordChange.Model;
+package com.example.BankApplication.changePassword.Model;
 
 public class ChangePassword {
 

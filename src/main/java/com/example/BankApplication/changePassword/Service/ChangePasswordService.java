@@ -1,6 +1,6 @@
-package com.example.BankApplication.passwordChange.Service;
+package com.example.BankApplication.changePassword.Service;
 
-import com.example.BankApplication.passwordChange.Model.ChangePassword;
+import com.example.BankApplication.changePassword.Model.ChangePassword;
 import com.example.BankApplication.user.*;
 import com.example.BankApplication.verification.EmailVerificationRepository;
 import com.example.BankApplication.verification.Verification;
