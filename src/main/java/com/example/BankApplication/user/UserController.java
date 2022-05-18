@@ -1,9 +1,11 @@
 package com.example.BankApplication.user;
 
+import com.example.BankApplication.account.InvalidTokenException;
+import com.example.BankApplication.passwordChange.Model.ChangePassword;
+import com.example.BankApplication.passwordChange.Service.ChangePasswordService;
 import com.example.BankApplication.verification.EmailVerificationException;
 import com.example.BankApplication.verification.Verification;
 import com.example.BankApplication.verification.VerifyEmail;
-import com.example.BankApplication.account.InvalidTokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +22,16 @@ public class UserController {
     private final UserService userService;
     private final LoginService loginService;
     private final VerifyEmail verifyEmail;
+    private final ChangePasswordService changePasswordService;
 
-    public UserController(UserService userService, LoginService loginService, VerifyEmail verifyEmail) {
+    public UserController(UserService userService,
+                          LoginService loginService,
+                          VerifyEmail verifyEmail,
+                          ChangePasswordService changePasswordService) {
         this.userService = userService;
         this.loginService = loginService;
         this.verifyEmail = verifyEmail;
+        this.changePasswordService = changePasswordService;
     }
 
     @GetMapping
@@ -78,6 +85,27 @@ public class UserController {
         }
     }
 
+    @PostMapping(path = "change-password")
+    public ResponseEntity<Object> passwordChange(@RequestHeader(value = "Authorization") String token) throws Exception {
+        try {
+            User email = changePasswordService.changePassword(token);
+            return ResponseEntity.status(HttpStatus.OK).body(email);
+        }catch (ValidationIdException | MessagingException | IOException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PostMapping(path = "new-password")
+    public ResponseEntity<Object> newPassword(@RequestHeader(value = "Authorization") String token,
+                                              @RequestBody ChangePassword changePassword){
+        try {
+            ChangePassword password = changePasswordService.newPassword(token, changePassword);
+            return ResponseEntity.status(HttpStatus.OK).body(password);
+        }catch (InvalidEmailOrPasswordException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
     @DeleteMapping(path = "{userId}")
     public ResponseEntity<Object> deleteUser(@PathVariable("userId") Long userId) throws SQLException {
         try {
@@ -91,9 +119,8 @@ public class UserController {
     }
 
     @PutMapping(path = "{userId}")
-    public ResponseEntity<Object> updateUser(
-            @PathVariable("userId") Long userId,
-            @RequestBody User user) throws SQLException {
+    public ResponseEntity<Object> updateUser(@PathVariable("userId") Long userId,
+                                             @RequestBody User user) throws SQLException {
         try {
             User updatedUser = userService.updateUser(userId, user);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(updatedUser);
