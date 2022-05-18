@@ -28,7 +28,6 @@ public class AnalyticsDay {
         this.date = date;
     }
 
-
     public Double getTotal() {
         return total;
     }
