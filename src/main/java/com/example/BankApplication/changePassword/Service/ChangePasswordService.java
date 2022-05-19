@@ -1,9 +1,15 @@
 package com.example.BankApplication.changePassword.Service;
 
 import com.example.BankApplication.changePassword.Model.ChangePassword;
-import com.example.BankApplication.user.*;
-import com.example.BankApplication.verification.EmailVerificationRepository;
-import com.example.BankApplication.verification.Verification;
+import com.example.BankApplication.user.Database.UserRepository;
+import com.example.BankApplication.user.Exception.InvalidEmailOrPasswordException;
+import com.example.BankApplication.user.Exception.ValidationIdException;
+import com.example.BankApplication.user.Model.User;
+import com.example.BankApplication.user.Service.EmailService;
+import com.example.BankApplication.user.Util.HashUtils;
+import com.example.BankApplication.user.Util.TokenUtil;
+import com.example.BankApplication.verification.Database.EmailVerificationRepository;
+import com.example.BankApplication.verification.Model.Verification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
