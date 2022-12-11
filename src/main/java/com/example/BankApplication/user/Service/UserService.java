@@ -8,9 +8,13 @@ import com.example.BankApplication.user.Validation.UserValidationService;
 import com.example.BankApplication.verification.Database.EmailVerificationRepository;
 import com.example.BankApplication.verification.Model.Verification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.jws.soap.SOAPBinding;
 import javax.mail.MessagingException;
+import org.springframework.data.domain.Pageable;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,13 +34,29 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
-    public List<User> listUsers() {
-        return userRepository.findAll();
+    public List<User> listUsers(Integer pageNumber, Integer pageSize) {
+
+        Pageable paging = (Pageable) PageRequest.of(pageNumber, pageSize);
+        Page<User> result = userRepository.findAll((org.springframework.data.domain.Pageable) paging);
+
+        return result.toList();
+
     }
 
     public User listUserById(Long userId) {
 
         User user = userRepository.getUserById(userId);
+
+        if (user == null) {
+            throw new ValidationIdException("Couldn't find user with that id");
+        }
+
+        return user;
+    }
+
+    public List<User> listUserByIdList(Long userId) {
+
+        List<User> user = userRepository.getUserByIdList(userId);
 
         if (user == null) {
             throw new ValidationIdException("Couldn't find user with that id");
@@ -55,15 +75,15 @@ public class UserService {
 
         userRepository.save(user);
 
-        String code = emailService.getRandomNumbers();
+//        String code = emailService.getRandomNumbers();
+//
+//        emailService.sendEmail(user.getEmail(), code,
+//                "User " + user.getFirstname() + ", welcome to bank application");
+//
+//        verification.setEmail(user.getEmail());
+//        verification.setCode(code);
 
-        emailService.sendEmail(user.getEmail(), code,
-                "User " + user.getFirstname() + ", welcome to bank application");
-
-        verification.setEmail(user.getEmail());
-        verification.setCode(code);
-
-        emailVerificationRepository.save(verification);
+//        emailVerificationRepository.save(verification);
 
         return user;
     }

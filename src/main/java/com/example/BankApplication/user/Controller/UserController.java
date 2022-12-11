@@ -14,13 +14,16 @@ import com.example.BankApplication.user.Exception.ValidationIdException;
 import com.example.BankApplication.verification.Exception.EmailVerificationException;
 import com.example.BankApplication.verification.Model.Verification;
 import com.example.BankApplication.verification.Service.VerifyEmail;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.jws.soap.SOAPBinding;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/users")
@@ -43,9 +46,9 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> listUsers() throws SQLException {
+    public ResponseEntity<Object> listUsers(@Param("pageNumber") Integer pageNumber, @Param("pageSize") Integer pageSize) throws SQLException {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(userService.listUsers());
+            return ResponseEntity.status(HttpStatus.OK).body(userService.listUsers(pageNumber, pageSize));
         } catch (ValidationIdException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -57,6 +60,16 @@ public class UserController {
             User listUserId = userService.listUserById(userId);
             return ResponseEntity.status(HttpStatus.OK).body(listUserId);
         } catch (ValidationIdException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping(path = "list/{userId}")
+    public ResponseEntity<Object> listUserByIdList(@PathVariable("userId") Long userId) throws SQLException {
+        try {
+            List<User> listUserById = userService.listUserByIdList(userId);
+            return ResponseEntity.status(HttpStatus.OK).body(listUserById);
+        }catch (ValidationIdException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
