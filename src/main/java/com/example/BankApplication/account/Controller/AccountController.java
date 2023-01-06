@@ -7,12 +7,14 @@ import com.example.BankApplication.account.Service.AccountService;
 import com.example.BankApplication.account.Exception.UserIdException;
 import com.example.BankApplication.account.Exception.ValidationAccountException;
 import com.example.BankApplication.account.Exception.ValidationIdAccountException;
+import com.example.BankApplication.blacklist.exception.BlackListTokenException;
 import com.example.BankApplication.pdfFile.Service.GeneratePdf;
 import com.example.BankApplication.transaction.Service.AmountService;
 import com.example.BankApplication.transaction.Model.Balance;
 import com.example.BankApplication.user.Exception.EmailNotVerifiedException;
 import com.example.BankApplication.user.Exception.ValidationIdException;
 import com.itextpdf.text.DocumentException;
+import io.jsonwebtoken.impl.crypto.RsaSignatureValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +40,19 @@ public class AccountController {
         this.generatePdf = generatePdf;
     }
 
+
+    @GetMapping(path = "allAccounts")
+    public ResponseEntity<Object> listAccounts(@RequestParam(name = "pageNumber")int pageNumber,
+                                               @RequestParam(name = "pageSize") int pageSize){
+
+        try {
+            List<Account> listAccounts = accountService.listAccounts(pageNumber, pageSize);
+            return ResponseEntity.status(HttpStatus.OK).body(listAccounts);
+        }catch (ValidationIdAccountException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+
+    }
     @GetMapping
     public ResponseEntity<Object> listAccountByUserId(@RequestHeader(value = "Authorization") String token)
                                                         throws SQLException {
@@ -62,16 +77,16 @@ public class AccountController {
         }
     }
 
-    @GetMapping(path = "{accountId}/{balance}")
-    public ResponseEntity<Object> balance(@RequestHeader(value = "Authorization") String token,
-                                          @PathVariable("accountId") Long accountId) throws SQLException {
-        try {
-            Balance balanceOfAccounts = amountService.balance(token, accountId);
-            return ResponseEntity.status(HttpStatus.OK).body(balanceOfAccounts);
-        } catch (ValidationIdAccountException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
+//    @GetMapping(path = "{accountId}/{balance}")
+//    public ResponseEntity<Object> balance(@RequestHeader(value = "Authorization") String token,
+//                                          @PathVariable("accountId") Long accountId) throws SQLException {
+//        try {
+//            Balance balanceOfAccounts = amountService.balance(token, accountId);
+//            return ResponseEntity.status(HttpStatus.OK).body(balanceOfAccounts);
+//        } catch (ValidationIdAccountException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+//        }
+//    }
 
     @PostMapping
     public ResponseEntity<Object> createAccount(@RequestHeader(value = "Authorization") String token,
@@ -83,6 +98,8 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (ValidationIdException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }catch (BlackListTokenException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 

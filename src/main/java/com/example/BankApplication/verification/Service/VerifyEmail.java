@@ -30,7 +30,7 @@ public class VerifyEmail {
         verificationMail.setEmail(verificationMail.getEmail());
         verificationMail.setCode(verificationMail.getCode());
 
-        userByMail.setVerifyEmail(true);
+        userByMail.setVerifyemail(true);
         userRepository.save(userByMail);
 
         emailVerificationRepository.save(verificationMail);

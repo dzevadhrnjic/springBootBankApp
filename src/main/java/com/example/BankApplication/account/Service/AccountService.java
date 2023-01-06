@@ -4,8 +4,14 @@ import com.example.BankApplication.account.Model.Account;
 import com.example.BankApplication.account.Database.AccountRepository;
 import com.example.BankApplication.account.Validation.AccountValidationService;
 import com.example.BankApplication.account.Exception.ValidationIdAccountException;
+import com.example.BankApplication.blacklist.database.BlacklistRepository;
+import com.example.BankApplication.blacklist.service.BlacklistService;
+import com.example.BankApplication.user.Model.User;
 import com.example.BankApplication.user.Util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,10 +22,18 @@ import java.util.List;
 @Service
 public class AccountService {
 
-    TokenUtil tokenUtil = new TokenUtil();
-
+    @Autowired
+    TokenUtil tokenUtil;
     @Autowired
     AccountRepository accountRepository;
+    public List<Account> listAccounts(int pageNumber, int pageSize){
+
+        Pageable paging = (Pageable) PageRequest.of(pageNumber, pageSize);
+        Page<Account> result = accountRepository.findAll(paging);
+
+       return result.toList();
+
+    }
 
     public List<Account> listAccountsByUserId(String token) {
 
@@ -59,6 +73,7 @@ public class AccountService {
 
     public Account createAccount(String token,Account account) throws SQLException {
 
+//        blacklistService.blackListOfTokens(token);
         Long userId = tokenUtil.verifyJwt(token);
         AccountValidationService.accountFieldsValidation(account);
 

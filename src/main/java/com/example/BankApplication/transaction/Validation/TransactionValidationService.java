@@ -18,7 +18,7 @@ public class TransactionValidationService {
 
     public static void transactionFieldsValidation(String token, Transaction transaction, Long accountId) throws SQLException {
         amountValidation(transaction);
-        sourceAccountValidation(token, accountId, transaction);
+//        sourceAccountValidation(token, accountId, transaction);
 
     }
 
@@ -30,9 +30,9 @@ public class TransactionValidationService {
         }
     }
 
-    public static void sourceAccountValidation(String token, Long accountId, Transaction transaction) throws SQLException {
-        if (amountService.accountIncome(accountId) < transaction.getAmount()) {
-            throw new ValidationTransactionException("You don't have that amount on your account");
-        }
-    }
+//    public static void sourceAccountValidation(String token, Long accountId, Transaction transaction) throws SQLException {
+//        if (amountService.accountIncome(accountId) < transaction.getAmount()) {
+//            throw new ValidationTransactionException("You don't have that amount on your account");
+//        }
+//    }
 }

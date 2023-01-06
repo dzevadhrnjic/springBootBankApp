@@ -25,6 +25,19 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
+    @GetMapping(path = "allTransactions")
+    public ResponseEntity<Object> listAllTransaction(@RequestParam(name = "pageNumber") int pageNumber,
+                                                     @RequestParam("pageSize") int pageSize){
+
+        try {
+            List<Transaction> listTransactions = transactionService.listAllTransaction(pageNumber, pageSize);
+            return ResponseEntity.status(HttpStatus.OK).body(listTransactions);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+
+    }
+
     @GetMapping
     public ResponseEntity<Object> listTransaction(@RequestParam(name = "order", required = false) String order,
                                                   @DateTimeFormat(pattern = "yyyy-MM-dd")

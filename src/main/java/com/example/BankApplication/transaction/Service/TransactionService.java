@@ -1,5 +1,6 @@
 package com.example.BankApplication.transaction.Service;
 
+import com.example.BankApplication.account.Model.Account;
 import com.example.BankApplication.account.Service.AccountService;
 import com.example.BankApplication.account.Exception.InvalidTokenException;
 import com.example.BankApplication.transaction.Database.TransactionRepository;
@@ -9,6 +10,9 @@ import com.example.BankApplication.transaction.Model.Transaction;
 import com.example.BankApplication.transaction.Validation.TransactionValidationService;
 import com.example.BankApplication.user.Util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -30,6 +34,15 @@ public class TransactionService {
 
     @Autowired
     TransactionRepository transactionRepository;
+
+    public List<Transaction> listAllTransaction(int pageNumber, int pageSize){
+
+        Pageable paging = (Pageable) PageRequest.of(pageNumber, pageSize);
+        Page<Transaction> result = transactionRepository.findAll(paging);
+
+        return result.toList();
+
+    }
 
     public List<Transaction> listTransactions(String order, Date dateFrom, Date dateTo){
 

@@ -1,5 +1,6 @@
 package com.example.BankApplication.user.Service;
 
+import com.example.BankApplication.blacklist.service.BlacklistService;
 import com.example.BankApplication.user.Database.UserRepository;
 import com.example.BankApplication.user.Exception.ValidationIdException;
 import com.example.BankApplication.user.Model.User;
@@ -33,7 +34,6 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
-
     public List<User> listUsers(Integer pageNumber, Integer pageSize) {
 
         Pageable paging = (Pageable) PageRequest.of(pageNumber, pageSize);

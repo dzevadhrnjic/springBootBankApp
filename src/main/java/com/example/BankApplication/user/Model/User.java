@@ -89,11 +89,11 @@ public class User {
         this.password = password;
     }
 
-    public boolean isVerifyEmail() {
+    public boolean isVerifyemail() {
         return verifyemail;
     }
 
-    public void setVerifyEmail(boolean verifyemail) {
+    public void setVerifyemail(boolean verifyemail) {
         this.verifyemail = verifyemail;
     }
 

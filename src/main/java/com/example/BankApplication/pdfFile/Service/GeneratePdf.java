@@ -54,7 +54,7 @@ public class GeneratePdf {
             throw new ValidationIdAccountException("No account with that id");
         }
 
-        if (!user.isVerifyEmail()){
+        if (!user.isVerifyemail()){
             throw new EmailNotVerifiedException("Please verify email");
         }
 
