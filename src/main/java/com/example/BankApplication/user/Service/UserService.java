@@ -1,6 +1,5 @@
 package com.example.BankApplication.user.Service;
 
-import com.example.BankApplication.blacklist.service.BlacklistService;
 import com.example.BankApplication.user.Database.UserRepository;
 import com.example.BankApplication.user.Exception.ValidationIdException;
 import com.example.BankApplication.user.Model.User;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.jws.soap.SOAPBinding;
 import javax.mail.MessagingException;
 import org.springframework.data.domain.Pageable;
 import java.io.IOException;
@@ -75,15 +73,15 @@ public class UserService {
 
         userRepository.save(user);
 
-//        String code = emailService.getRandomNumbers();
-//
+        String code = emailService.getRandomNumbers();
+
 //        emailService.sendEmail(user.getEmail(), code,
 //                "User " + user.getFirstname() + ", welcome to bank application");
 //
-//        verification.setEmail(user.getEmail());
-//        verification.setCode(code);
+        verification.setEmail(user.getEmail());
+        verification.setCode(code);
 
-//        emailVerificationRepository.save(verification);
+        emailVerificationRepository.save(verification);
 
         return user;
     }
