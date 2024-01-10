@@ -1,8 +1,8 @@
 package com.example.BankApplication.user.Service;
 
+import com.example.BankApplication.user.Model.AccessToken;
 import com.example.BankApplication.user.Database.UserRepository;
 import com.example.BankApplication.user.Exception.InvalidEmailOrPasswordException;
-import com.example.BankApplication.user.Model.AccessToken;
 import com.example.BankApplication.user.Model.User;
 import com.example.BankApplication.user.Model.UserLogin;
 import com.example.BankApplication.user.Util.HashUtils;

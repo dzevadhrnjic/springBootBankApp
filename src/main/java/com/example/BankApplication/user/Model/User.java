@@ -2,13 +2,13 @@ package com.example.BankApplication.user.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "dbuser")
-
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,11 +16,14 @@ public class User {
     private String firstname;
     private String lastname;
     private String address;
-    private String phonenumber;
+    @Column(name = "phonenumber")
+    private String phoneNumber;
     private String email;
-    private LocalDateTime createdat;
+    @Column(name = "createdat")
+    private LocalDateTime createdAt;
     private String password;
-    private boolean verifyemail;
+    @Column(name = "verifyemail")
+    private boolean verifyEmail;
 
     public Long getId() {
         return id;
@@ -54,12 +57,12 @@ public class User {
         this.address = address;
     }
 
-    public String getPhonenumber() {
-        return phonenumber;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPhonenumber(String phonenumber) {
-        this.phonenumber = phonenumber;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getEmail() {
@@ -70,12 +73,12 @@ public class User {
         this.email = email;
     }
 
-    public LocalDateTime getCreatedat() {
-        return createdat;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreatedat(LocalDateTime createdat) {
-        this.createdat = createdat;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     @JsonIgnore
@@ -88,25 +91,11 @@ public class User {
         this.password = password;
     }
 
-    public boolean isVerifyemail() {
-        return verifyemail;
+    public boolean isVerifyEmail() {
+        return verifyEmail;
     }
 
-    public void setVerifyemail(boolean verifyemail) {
-        this.verifyemail = verifyemail;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", firstname='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", address='" + address + '\'' +
-                ", phonenumber='" + phonenumber + '\'' +
-                ", email='" + email + '\'' +
-                ", createdat='" + createdat + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public void setVerifyEmail(boolean verifyEmail) {
+        this.verifyEmail = verifyEmail;
     }
 }

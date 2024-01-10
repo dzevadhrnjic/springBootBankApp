@@ -1,6 +1,7 @@
 package com.example.BankApplication.user.Service;
 
 import com.example.BankApplication.user.Database.UserRepository;
+import com.example.BankApplication.user.Database.UserSpecification;
 import com.example.BankApplication.user.Exception.ValidationIdException;
 import com.example.BankApplication.user.Model.User;
 import com.example.BankApplication.user.Util.HashUtils;
@@ -8,12 +9,14 @@ import com.example.BankApplication.user.Validation.UserValidationService;
 import com.example.BankApplication.verification.Database.EmailVerificationRepository;
 import com.example.BankApplication.verification.Model.Verification;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+
 import org.springframework.data.domain.Pageable;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,29 +35,35 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
-    public List<User> listUsers(Integer pageNumber, Integer pageSize) {
 
-        Pageable paging = (Pageable) PageRequest.of(pageNumber, pageSize);
-        Page<User> result = userRepository.findAll((org.springframework.data.domain.Pageable) paging);
+    public List<User> listUsers(Integer pageNumber, Integer pageSize, String firstname, String lastname, String address, String email) {
 
-        return result.toList();
+        Pageable paging = PageRequest.of(pageNumber, pageSize);
 
-    }
+        Specification<User> specification = Specification.where(null);
 
-    public User listUserById(Long userId) {
-
-        User user = userRepository.getUserById(userId);
-
-        if (user == null) {
-            throw new ValidationIdException("Couldn't find user with that id");
+        if (firstname != null && !firstname.isEmpty()) {
+            specification = specification.and(UserSpecification.hasFirstName(firstname));
         }
 
-        return user;
+        if (lastname != null && !lastname.isEmpty()) {
+            specification = specification.and(UserSpecification.hasLastName(lastname));
+        }
+
+        if (address != null && !address.isEmpty()) {
+            specification = specification.and(UserSpecification.hasAddress(address));
+        }
+
+        if (email != null && !email.isEmpty()) {
+            specification = specification.and(UserSpecification.hasEmail(email));
+        }
+
+        return userRepository.findAll(specification, paging);
     }
 
-    public List<User> listUserByIdList(Long userId) {
+    public User getUserById(Long userId) {
 
-        List<User> user = userRepository.getUserByIdList(userId);
+        User user = userRepository.getUserById(userId);
 
         if (user == null) {
             throw new ValidationIdException("Couldn't find user with that id");
@@ -68,16 +77,16 @@ public class UserService {
         UserValidationService.userFieldsValidation(user);
 
         LocalDateTime localDateAndTime = LocalDateTime.now();
-        user.setCreatedat(localDateAndTime);
+        user.setCreatedAt(localDateAndTime);
         user.setPassword(hashUtils.generateHash(user.getPassword()));
 
         userRepository.save(user);
 
         String code = emailService.getRandomNumbers();
 
-//        emailService.sendEmail(user.getEmail(), code,
-//                "User " + user.getFirstname() + ", welcome to bank application");
-//
+        emailService.sendEmail(user.getEmail(), code,
+                "User " + user.getFirstname() + ", welcome to bank application");
+
         verification.setEmail(user.getEmail());
         verification.setCode(code);
 
@@ -88,18 +97,19 @@ public class UserService {
 
     public void deleteUser(Long userId) {
 
-        listUserById(userId);
+        getUserById(userId);
 
         userRepository.deleteById(userId);
+
     }
 
     public User updateUser(Long userId, User user) {
 
-        listUserById(userId);
+        getUserById(userId);
         UserValidationService.userFieldsValidation(user);
 
         LocalDateTime localDateAndTime = LocalDateTime.now();
-        user.setCreatedat(localDateAndTime);
+        user.setCreatedAt(localDateAndTime);
         user.setPassword(hashUtils.generateHash(user.getPassword()));
         user.setId(userId);
 

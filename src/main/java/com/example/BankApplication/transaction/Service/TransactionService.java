@@ -4,6 +4,7 @@ import com.example.BankApplication.account.Model.Account;
 import com.example.BankApplication.account.Service.AccountService;
 import com.example.BankApplication.account.Exception.InvalidTokenException;
 import com.example.BankApplication.transaction.Database.TransactionRepository;
+import com.example.BankApplication.transaction.Database.TransactionSpecification;
 import com.example.BankApplication.transaction.Exception.TransactionIdValidation;
 import com.example.BankApplication.transaction.Exception.ValidationIdTransaction;
 import com.example.BankApplication.transaction.Model.Transaction;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -21,41 +24,31 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-
 public class TransactionService {
 
-    public static TokenUtil tokenUtil = new TokenUtil();
+    @Autowired
+    TokenUtil tokenUtil;
 
-    private final AccountService accountService;
+    @Autowired
+    private AccountService accountService;
 
-    public TransactionService(AccountService accountService) {
-        this.accountService = accountService;
-    }
 
     @Autowired
     TransactionRepository transactionRepository;
 
-    public List<Transaction> listAllTransaction(int pageNumber, int pageSize){
+    public List<Transaction> listAllTransactions(int pageNumber, int pageSize, String order, Date dateFrom, Date dateTo){
 
-        Pageable paging = (Pageable) PageRequest.of(pageNumber, pageSize);
-        Page<Transaction> result = transactionRepository.findAll(paging);
+        Pageable paging = PageRequest.of(pageNumber, pageSize);
 
-        return result.toList();
+        Specification<Transaction> specification = Specification.where(null);
 
-    }
-
-    public List<Transaction> listTransactions(String order, Date dateFrom, Date dateTo){
-
-        if (order.equals("ASC") && dateFrom != null && dateTo != null){
-            return transactionRepository.findTransactionsByCreatedAtAsc(dateFrom, dateTo);
-        }else if (order.equals("DESC") && dateFrom != null && dateTo != null){
-            return transactionRepository.findTransactionsByCreatedAtDesc(dateFrom, dateTo);
-        }else if (order.equals("ASC")){
-            return transactionRepository.findAllOrderByAsc();
-        }else {
-            return transactionRepository.findAllOrderByDesc();
+        if (!order.isEmpty() && dateFrom != null && dateTo != null) {
+            specification = specification.and(TransactionSpecification.transactionByDateAsc(order, dateFrom, dateTo));
+        } else if (order.equalsIgnoreCase("asc") || order.equalsIgnoreCase("desc")) {
+            specification = specification.and(TransactionSpecification.orderByAscOrByDescCreatedat(order));
         }
 
+        return transactionRepository.findAll(specification, paging);
     }
 
     public List<Transaction> listTransactionsByUserId(String token) throws SQLException {
@@ -65,7 +58,7 @@ public class TransactionService {
         List<Transaction> transaction = transactionRepository.getTransactionByUserId(userId);
 
         if (transaction == null) {
-            throw new TransactionIdValidation("Couldn't find id");
+            throw new TransactionIdValidation("Couldn't find transaction for that user");
         }
 
         return transaction;

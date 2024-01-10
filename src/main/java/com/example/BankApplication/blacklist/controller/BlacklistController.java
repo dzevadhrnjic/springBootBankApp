@@ -1,5 +1,6 @@
 package com.example.BankApplication.blacklist.controller;
 
+import com.example.BankApplication.blacklist.exception.BlackListTokenException;
 import com.example.BankApplication.blacklist.model.BlackList;
 import com.example.BankApplication.blacklist.service.BlacklistService;
 import org.springframework.http.HttpStatus;
@@ -20,10 +21,10 @@ public class BlacklistController {
     }
 
     @PostMapping(path = "logout")
-    public ResponseEntity<Object> logout(@RequestParam(value = "Authorization") String token){
+    public ResponseEntity<Object> logout(@RequestHeader(value = "Authorization") String token){
         try {
             return ResponseEntity.status(HttpStatus.OK).body(blacklistService.logout(token));
-        }catch (Exception e){
+        }catch (BlackListTokenException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -33,20 +34,8 @@ public class BlacklistController {
         try {
             blacklistService.blackListOfTokens(token);
             return ResponseEntity.status(HttpStatus.OK).body(token);
-        }catch (Exception e){
+        }catch (BlackListTokenException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
-
-//    @PutMapping(path = "logout", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-//    public JWTBlacklist logout(@RequestBody Map<String, String> json, HttpSession httpSession) throws UnsupportedEncodingException {
-//
-//        String token = json.get("token");
-//
-//        JWTBlacklist jwtBlacklist = new JWTBlacklist();
-//        jwtBlacklist.setToken(token);
-//        blacklistRepository.save(jwtBlacklist);
-//
-//        return blacklistRepository.save(jwtBlacklist);
-//    }
 }

@@ -5,8 +5,6 @@ public class ChangePassword {
     private String code;
     private String oldPassword;
     private String newPassword;
-    public ChangePassword() {
-    }
 
     public String getCode() {
         return code;

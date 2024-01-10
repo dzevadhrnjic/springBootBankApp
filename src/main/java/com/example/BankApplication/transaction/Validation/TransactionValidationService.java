@@ -17,9 +17,8 @@ public class TransactionValidationService {
     }
 
     public static void transactionFieldsValidation(String token, Transaction transaction, Long accountId) throws SQLException {
-        amountValidation(transaction);
-//        sourceAccountValidation(token, accountId, transaction);
 
+        amountValidation(transaction);
     }
 
     public static void amountValidation(Transaction transaction) {

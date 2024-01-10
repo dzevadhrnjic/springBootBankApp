@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "dbtransaction")
-
 public class Transaction {
 
     @Id
@@ -16,8 +15,6 @@ public class Transaction {
     private Double amount;
     private LocalDateTime createdat;
     private Long userid;
-    public Transaction() {
-    }
 
     public Long getId() {
         return id;
@@ -59,31 +56,11 @@ public class Transaction {
         this.createdat = createdat;
     }
 
-    //    public Date getCreatedat() {
-//        return createdat;
-//    }
-//
-//    public void setCreatedat(Date createdat) {
-//        this.createdat = createdat;
-//    }
-
-    public void setUserid(Long userid) {
-        this.userid = userid;
-    }
-
     public Long getUserid() {
         return userid;
     }
 
-    @Override
-    public String toString() {
-        return "Transaction{" +
-                "id=" + id +
-                ", sourceaccount=" + sourceaccount +
-                ", destinationaccount=" + destinationaccount +
-                ", amount=" + amount +
-                ", createdat=" + createdat +
-                ", userid=" + userid +
-                '}';
+    public void setUserid(Long userid) {
+        this.userid = userid;
     }
 }

@@ -1,11 +1,12 @@
 package com.example.BankApplication.user.Controller;
 
 import com.example.BankApplication.account.Exception.InvalidTokenException;
+import com.example.BankApplication.blacklist.exception.BlackListTokenException;
 import com.example.BankApplication.changePassword.Model.ChangePassword;
 import com.example.BankApplication.changePassword.Service.ChangePasswordService;
-import com.example.BankApplication.user.Exception.InvalidEmailOrPasswordException;
 import com.example.BankApplication.user.Model.AccessToken;
 import com.example.BankApplication.user.Model.User;
+import com.example.BankApplication.user.Exception.InvalidEmailOrPasswordException;
 import com.example.BankApplication.user.Model.UserLogin;
 import com.example.BankApplication.user.Service.LoginService;
 import com.example.BankApplication.user.Service.UserService;
@@ -14,68 +15,59 @@ import com.example.BankApplication.user.Exception.ValidationIdException;
 import com.example.BankApplication.verification.Exception.EmailVerificationException;
 import com.example.BankApplication.verification.Model.Verification;
 import com.example.BankApplication.verification.Service.VerifyEmail;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.jws.soap.SOAPBinding;
 import javax.mail.MessagingException;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/users")
 
 public class UserController {
 
-    private final UserService userService;
-    private final LoginService loginService;
-    private final VerifyEmail verifyEmail;
-    private final ChangePasswordService changePasswordService;
+    @Autowired
+    UserService userService;
 
-    public UserController(UserService userService,
-                          LoginService loginService,
-                          VerifyEmail verifyEmail,
-                          ChangePasswordService changePasswordService) {
-        this.userService = userService;
-        this.loginService = loginService;
-        this.verifyEmail = verifyEmail;
-        this.changePasswordService = changePasswordService;
-    }
+    @Autowired
+    LoginService loginService;
+
+    @Autowired
+    VerifyEmail verifyEmail;
+
+    @Autowired
+    ChangePasswordService changePasswordService;
+
 
     @GetMapping
-    public ResponseEntity<Object> listUsers(@Param("pageNumber") Integer pageNumber, @Param("pageSize") Integer pageSize) throws SQLException {
+    public ResponseEntity<Object> listUsers(@Param("pageNumber") Integer pageNumber,
+                                            @Param("pageSize") Integer pageSize,
+                                            @RequestParam(value = "firstname", required = false) String firstname,
+                                            @RequestParam(value = "lastname", required = false) String lastname,
+                                            @RequestParam(value = "address", required = false) String address,
+                                            @RequestParam(value = "email", required = false) String email) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(userService.listUsers(pageNumber, pageSize));
+            return ResponseEntity.status(HttpStatus.OK).body(userService.listUsers(pageNumber, pageSize, firstname, lastname, address, email));
         } catch (ValidationIdException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @GetMapping(path = "{userId}")
-    public ResponseEntity<Object> listUserById(@PathVariable("userId") Long userId) throws SQLException {
+    public ResponseEntity<Object> listUserById(@PathVariable("userId") Long userId) {
         try {
-            User listUserId = userService.listUserById(userId);
+            User listUserId = userService.getUserById(userId);
             return ResponseEntity.status(HttpStatus.OK).body(listUserId);
         } catch (ValidationIdException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
-    @GetMapping(path = "list/{userId}")
-    public ResponseEntity<Object> listUserByIdList(@PathVariable("userId") Long userId) throws SQLException {
-        try {
-            List<User> listUserById = userService.listUserByIdList(userId);
-            return ResponseEntity.status(HttpStatus.OK).body(listUserById);
-        }catch (ValidationIdException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
     @PostMapping
-    public ResponseEntity<Object> createNewUser(@RequestBody User user) throws SQLException {
+    public ResponseEntity<Object> createNewUser(@RequestBody User user) {
         try {
             userService.createUser(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(user);
@@ -87,7 +79,7 @@ public class UserController {
     }
 
     @PostMapping(path = "login")
-    public ResponseEntity<Object> userLogin(@RequestBody UserLogin userLogin) throws SQLException {
+    public ResponseEntity<Object> userLogin(@RequestBody UserLogin userLogin) {
         try {
             AccessToken loginUser = loginService.loginUser(userLogin);
             return ResponseEntity.status(HttpStatus.CREATED).body(loginUser);
@@ -110,10 +102,13 @@ public class UserController {
     public ResponseEntity<Object> passwordChange(@RequestHeader(value = "Authorization") String token) throws Exception {
         try {
             changePasswordService.changePassword(token);
-            return ResponseEntity.status(HttpStatus.OK).body(token);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
         }catch (ValidationIdException | MessagingException | IOException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }catch (BlackListTokenException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
+
     }
 
     @PostMapping(path = "new-password")
@@ -124,11 +119,13 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(password);
         }catch (InvalidEmailOrPasswordException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }catch (BlackListTokenException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 
     @DeleteMapping(path = "{userId}")
-    public ResponseEntity<Object> deleteUser(@PathVariable("userId") Long userId) throws SQLException {
+    public ResponseEntity<Object> deleteUser(@PathVariable("userId") Long userId) {
         try {
             userService.deleteUser(userId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userId);
@@ -141,7 +138,7 @@ public class UserController {
 
     @PutMapping(path = "{userId}")
     public ResponseEntity<Object> updateUser(@PathVariable("userId") Long userId,
-                                             @RequestBody User user) throws SQLException {
+                                             @RequestBody User user) {
         try {
             User updatedUser = userService.updateUser(userId, user);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(updatedUser);

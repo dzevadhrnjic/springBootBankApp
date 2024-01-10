@@ -16,10 +16,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class ChangePasswordService {
 
-    TokenUtil tokenUtil = new TokenUtil();
     Verification verification = new Verification();
     HashUtils hashUtils = new HashUtils();
 
+    @Autowired
+    TokenUtil tokenUtil;
     @Autowired
     UserRepository userRepository;
 
@@ -58,7 +59,7 @@ public class ChangePasswordService {
         }
 
         if (!user.getPassword().equals(hashUtils.generateHash(changePassword.getOldPassword()))) {
-            throw new InvalidEmailOrPasswordException("Invalid password, try again");
+            throw new InvalidEmailOrPasswordException("Invalid old password , try again");
         } else {
             user.setPassword(hashUtils.generateHash(changePassword.getNewPassword()));
 

@@ -18,9 +18,6 @@ public class StatementPdf {
     @Id
     private Long id;
 
-    public StatementPdf() {
-    }
-
     public Double getAmount() {
         return amount;
     }

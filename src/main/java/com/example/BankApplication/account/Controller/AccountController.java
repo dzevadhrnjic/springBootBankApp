@@ -41,12 +41,13 @@ public class AccountController {
     }
 
 
-    @GetMapping(path = "allAccounts")
+    @GetMapping("all")
     public ResponseEntity<Object> listAccounts(@RequestParam(name = "pageNumber")int pageNumber,
-                                               @RequestParam(name = "pageSize") int pageSize){
+                                               @RequestParam(name = "pageSize") int pageSize,
+                                               @RequestParam(name = "name", required = false) String name){
 
         try {
-            List<Account> listAccounts = accountService.listAccounts(pageNumber, pageSize);
+            List<Account> listAccounts = accountService.listAccounts(pageNumber, pageSize, name);
             return ResponseEntity.status(HttpStatus.OK).body(listAccounts);
         }catch (ValidationIdAccountException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -63,30 +64,36 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (UserIdException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (BlackListTokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 
     @GetMapping(path = "{accountId}")
     public ResponseEntity<Object> listAccountsById(@RequestHeader(value = "Authorization") String token,
-                                                   @PathVariable("accountId") Long accountId) throws SQLException {
+                                                   @PathVariable("accountId") Long accountId) {
         try {
             Account listAccountId = accountService.listAccountByUserIdAndId(token, accountId);
             return ResponseEntity.status(HttpStatus.OK).body(listAccountId);
         } catch (ValidationIdAccountException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (BlackListTokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 
-//    @GetMapping(path = "{accountId}/{balance}")
-//    public ResponseEntity<Object> balance(@RequestHeader(value = "Authorization") String token,
-//                                          @PathVariable("accountId") Long accountId) throws SQLException {
-//        try {
-//            Balance balanceOfAccounts = amountService.balance(token, accountId);
-//            return ResponseEntity.status(HttpStatus.OK).body(balanceOfAccounts);
-//        } catch (ValidationIdAccountException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-//        }
-//    }
+    @GetMapping(path = "{accountId}/balance")
+    public ResponseEntity<Object> balance(@RequestHeader(value = "Authorization") String token,
+                                          @PathVariable("accountId") Long accountId) {
+        try {
+            Balance balanceOfAccounts = amountService.balance(token, accountId);
+            return ResponseEntity.status(HttpStatus.OK).body(balanceOfAccounts);
+        } catch (ValidationIdAccountException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (BlackListTokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
 
     @PostMapping
     public ResponseEntity<Object> createAccount(@RequestHeader(value = "Authorization") String token,
@@ -105,7 +112,7 @@ public class AccountController {
 
     @DeleteMapping(path = "{accountId}")
     public ResponseEntity<Object> deleteAccount(@RequestHeader(value = "Authorization") String token,
-                                                @PathVariable("accountId") Long accountId) throws SQLException {
+                                                @PathVariable("accountId") Long accountId) {
         try {
             accountService.deleteAccount(token, accountId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(accountId);
@@ -113,6 +120,8 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (InvalidTokenException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (BlackListTokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 
@@ -127,19 +136,23 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (ValidationIdAccountException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (BlackListTokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 
-    @GetMapping(path = "{createPdf}/{accountId}/{statements}")
+    @GetMapping(path = "createPdf/{accountId}/statements")
     public ResponseEntity<Object> createPdfFile(@RequestHeader(value = "Authorization") String  token,
                                                 @PathVariable("accountId") Long accountId)
                                                 throws MessagingException, IOException {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(generatePdf.statement(token, accountId));
-        }catch (EmailNotVerifiedException | DocumentException e) {
+        } catch (EmailNotVerifiedException | DocumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }catch(ValidationIdAccountException | FileNotFoundException e){
+        } catch(ValidationIdAccountException | FileNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch(BlackListTokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 }

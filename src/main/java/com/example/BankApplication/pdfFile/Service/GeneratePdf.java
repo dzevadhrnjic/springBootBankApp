@@ -54,7 +54,7 @@ public class GeneratePdf {
             throw new ValidationIdAccountException("No account with that id");
         }
 
-        if (!user.isVerifyemail()){
+        if (!user.isVerifyEmail()){
             throw new EmailNotVerifiedException("Please verify email");
         }
 
@@ -66,7 +66,7 @@ public class GeneratePdf {
         return null;
     }
 
-    public void createPdfFile(Long accountId) throws DocumentException, IOException, MessagingException {
+    public void createPdfFile(Long accountId) throws DocumentException, IOException {
 
         Document document = new Document();
         PdfWriter.getInstance(document, new FileOutputStream("transactionStatement.pdf"));

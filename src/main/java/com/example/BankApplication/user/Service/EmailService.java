@@ -25,7 +25,7 @@ public class EmailService  {
     @Autowired
     public JavaMailSender javaMailSender;
 
-    public void sendEmail(String to, String subject, String text) throws MessagingException, IOException {
+    public void sendEmail(String to, String subject, String text) {
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(NOREPLY_ADDRESS);

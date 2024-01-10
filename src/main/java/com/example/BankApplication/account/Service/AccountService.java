@@ -1,17 +1,15 @@
 package com.example.BankApplication.account.Service;
 
+import com.example.BankApplication.account.Database.AccountSpecification;
 import com.example.BankApplication.account.Model.Account;
 import com.example.BankApplication.account.Database.AccountRepository;
 import com.example.BankApplication.account.Validation.AccountValidationService;
 import com.example.BankApplication.account.Exception.ValidationIdAccountException;
-import com.example.BankApplication.blacklist.database.BlacklistRepository;
-import com.example.BankApplication.blacklist.service.BlacklistService;
-import com.example.BankApplication.user.Model.User;
 import com.example.BankApplication.user.Util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -24,15 +22,21 @@ public class AccountService {
 
     @Autowired
     TokenUtil tokenUtil;
+
     @Autowired
     AccountRepository accountRepository;
-    public List<Account> listAccounts(int pageNumber, int pageSize){
 
-        Pageable paging = (Pageable) PageRequest.of(pageNumber, pageSize);
-        Page<Account> result = accountRepository.findAll(paging);
+    public List<Account> listAccounts(int pageNumber, int pageSize, String name) {
 
-       return result.toList();
+        Pageable paging = PageRequest.of(pageNumber, pageSize);
 
+        Specification<Account> specification = Specification.where(null);
+
+        if (name != null && !name.isEmpty()) {
+            specification = specification.and(AccountSpecification.hasName(name));
+        }
+
+        return accountRepository.findAll(specification, paging);
     }
 
     public List<Account> listAccountsByUserId(String token) {
@@ -71,14 +75,14 @@ public class AccountService {
         return account;
     }
 
-    public Account createAccount(String token,Account account) throws SQLException {
+    public Account createAccount(String token, Account account) throws SQLException {
 
-//        blacklistService.blackListOfTokens(token);
+        // blacklistService.blackListOfTokens(token);
         Long userId = tokenUtil.verifyJwt(token);
         AccountValidationService.accountFieldsValidation(account);
 
         LocalDateTime localDateAndTime = LocalDateTime.now();
-        account.setCreatedat(localDateAndTime);
+        account.setCreatedAt(localDateAndTime);
         account.setUserid(userId);
 
         accountRepository.save(account);
@@ -102,7 +106,7 @@ public class AccountService {
         AccountValidationService.accountFieldsValidation(account);
 
         LocalDateTime localDateAndTime = LocalDateTime.now();
-        account.setCreatedat(localDateAndTime);
+        account.setCreatedAt(localDateAndTime);
         account.setId(accountId);
         account.setUserid(userId);
 

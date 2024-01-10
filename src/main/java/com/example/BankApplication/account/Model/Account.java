@@ -12,11 +12,11 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Double initialbalance;
+    @Column(name = "initialbalance")
+    private Double initialBalance;
     private Long userid;
-    private LocalDateTime createdat;
-    public Account() {
-    }
+    @Column(name = "createdat")
+    private LocalDateTime createdAt;
 
     public Long getId() {
         return id;
@@ -34,12 +34,12 @@ public class Account {
         this.name = name;
     }
 
-    public Double getInitialbalance() {
-        return initialbalance;
+    public Double getInitialBalance() {
+        return initialBalance;
     }
 
-    public void setInitialbalance(Double initialbalance) {
-        this.initialbalance = initialbalance;
+    public void setInitialBalance(Double initialbalance) {
+        this.initialBalance = initialbalance;
     }
 
     public Long getUserid() {
@@ -50,22 +50,12 @@ public class Account {
         this.userid = userid;
     }
 
-    public LocalDateTime getCreatedat() {
-        return createdat;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreatedat(LocalDateTime createdat) {
-        this.createdat = createdat;
+    public void setCreatedAt(LocalDateTime createdat) {
+        this.createdAt = createdat;
     }
 
-    @Override
-    public String toString() {
-        return "Account{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", initialbalance=" + initialbalance +
-                ", userid=" + userid +
-                ", createdat=" + createdat +
-                '}';
-    }
 }

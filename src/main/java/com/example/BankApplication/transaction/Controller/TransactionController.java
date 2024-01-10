@@ -2,57 +2,51 @@ package com.example.BankApplication.transaction.Controller;
 
 import com.example.BankApplication.account.Exception.InvalidTokenException;
 import com.example.BankApplication.account.Exception.ValidationIdAccountException;
+import com.example.BankApplication.blacklist.exception.BlackListTokenException;
 import com.example.BankApplication.transaction.Model.Transaction;
 import com.example.BankApplication.transaction.Service.TransactionService;
 import com.example.BankApplication.transaction.Exception.ValidationIdTransaction;
 import com.example.BankApplication.transaction.Exception.ValidationTransactionException;
+import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/transactions")
-
 public class TransactionController {
 
-    TransactionService transactionService;
+    private final TransactionService transactionService;
+
     public TransactionController(TransactionService transactionService) {
         this.transactionService = transactionService;
     }
 
-    @GetMapping(path = "allTransactions")
+    @GetMapping(path = "all")
     public ResponseEntity<Object> listAllTransaction(@RequestParam(name = "pageNumber") int pageNumber,
-                                                     @RequestParam("pageSize") int pageSize){
+                                                     @RequestParam(name = "pageSize") int pageSize,
+                                                     @RequestParam(name = "order", required = false) String order,
+                                                     @DateTimeFormat(pattern = "yyyy-MM-dd")
+                                                     @RequestParam(name = "dateFrom", required = false) Date dateFrom,
+                                                     @DateTimeFormat(pattern = "yyyy-MM-dd")
+                                                     @RequestParam(name = "dateTo", required = false) Date dateTo) {
 
         try {
-            List<Transaction> listTransactions = transactionService.listAllTransaction(pageNumber, pageSize);
+            List<Transaction> listTransactions = transactionService.listAllTransactions(pageNumber, pageSize, order, dateFrom, dateTo);
             return ResponseEntity.status(HttpStatus.OK).body(listTransactions);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-
     }
 
-    @GetMapping
-    public ResponseEntity<Object> listTransaction(@RequestParam(name = "order", required = false) String order,
-                                                  @DateTimeFormat(pattern = "yyyy-MM-dd")
-                                                  @RequestParam(name = "dateFrom", required = false) Date dateFrom,
-                                                  @DateTimeFormat(pattern = "yyyy-MM-dd")
-                                                  @RequestParam(name = "dateTo", required = false) Date dateTo){
-        try {
-            List<Transaction> transactionsList = transactionService.listTransactions(order, dateFrom, dateTo);
-            return ResponseEntity.status(HttpStatus.OK).body(transactionsList);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
     @GetMapping(path = "userTransaction")
-    public ResponseEntity<Object> listAccountByUserId(@RequestHeader(value = "Authorization") String token) throws SQLException {
+    public ResponseEntity<Object> listTransactionsByUserId(@RequestHeader(value = "Authorization") String token) throws SQLException {
         try {
             List<Transaction> listTransaction = transactionService.listTransactionsByUserId(token);
             return ResponseEntity.status(HttpStatus.OK).body(listTransaction);
@@ -60,6 +54,8 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (ValidationIdTransaction e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (BlackListTokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 
@@ -83,6 +79,8 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (ValidationIdAccountException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (BlackListTokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 
