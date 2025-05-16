@@ -6,7 +6,6 @@ import com.example.BankApplication.user.Exception.ValidationException;
 public class UserValidationService {
 
     public static void userFieldsValidation(User user) {
-
         userFirstNameValidation(user);
         userLastNameValidation(user);
         userAddressValidation(user);

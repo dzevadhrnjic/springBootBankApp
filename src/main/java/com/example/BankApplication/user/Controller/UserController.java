@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/users")
@@ -43,14 +44,15 @@ public class UserController {
 
 
     @GetMapping
-    public ResponseEntity<Object> listUsers(@Param("pageNumber") Integer pageNumber,
-                                            @Param("pageSize") Integer pageSize,
-                                            @RequestParam(value = "firstname", required = false) String firstname,
-                                            @RequestParam(value = "lastname", required = false) String lastname,
-                                            @RequestParam(value = "address", required = false) String address,
-                                            @RequestParam(value = "email", required = false) String email) {
+    public ResponseEntity<Object> getUsers(@Param("pageNumber") Integer pageNumber,
+                                           @Param("pageSize") Integer pageSize,
+                                           @RequestParam(value = "firstname", required = false) String firstname,
+                                           @RequestParam(value = "lastname", required = false) String lastname,
+                                           @RequestParam(value = "address", required = false) String address,
+                                           @RequestParam(value = "email", required = false) String email) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(userService.listUsers(pageNumber, pageSize, firstname, lastname, address, email));
+            List<User> users = userService.listUsers(pageNumber, pageSize, firstname, lastname, address, email);
+            return ResponseEntity.status(HttpStatus.OK).body(users);
         } catch (ValidationIdException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -66,15 +68,13 @@ public class UserController {
         }
     }
 
-    @PostMapping
+    @PostMapping("addUser")
     public ResponseEntity<Object> createNewUser(@RequestBody User user) {
         try {
-            userService.createUser(user);
+            userService.addUser(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(user);
         } catch (ValidationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (MessagingException | IOException e) {
-            return null;
         }
     }
 
@@ -99,11 +99,11 @@ public class UserController {
     }
 
     @PostMapping(path = "change-password")
-    public ResponseEntity<Object> passwordChange(@RequestHeader(value = "Authorization") String token) throws Exception {
+    public ResponseEntity<Object> passwordChange(@RequestHeader(value = "Authorization") String token)  {
         try {
             changePasswordService.changePassword(token);
             return ResponseEntity.status(HttpStatus.OK).body(null);
-        }catch (ValidationIdException | MessagingException | IOException e){
+        }catch (ValidationIdException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }catch (BlackListTokenException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());

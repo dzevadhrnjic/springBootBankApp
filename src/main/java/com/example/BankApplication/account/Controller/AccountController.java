@@ -1,6 +1,5 @@
 package com.example.BankApplication.account.Controller;
 
-
 import com.example.BankApplication.account.Exception.InvalidTokenException;
 import com.example.BankApplication.account.Model.Account;
 import com.example.BankApplication.account.Service.AccountService;
@@ -14,7 +13,6 @@ import com.example.BankApplication.transaction.Model.Balance;
 import com.example.BankApplication.user.Exception.EmailNotVerifiedException;
 import com.example.BankApplication.user.Exception.ValidationIdException;
 import com.itextpdf.text.DocumentException;
-import io.jsonwebtoken.impl.crypto.RsaSignatureValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +39,7 @@ public class AccountController {
     }
 
 
-    @GetMapping("all")
+    @GetMapping("allAccounts")
     public ResponseEntity<Object> listAccounts(@RequestParam(name = "pageNumber")int pageNumber,
                                                @RequestParam(name = "pageSize") int pageSize,
                                                @RequestParam(name = "name", required = false) String name){
@@ -54,6 +52,7 @@ public class AccountController {
         }
 
     }
+
     @GetMapping
     public ResponseEntity<Object> listAccountByUserId(@RequestHeader(value = "Authorization") String token)
                                                         throws SQLException {

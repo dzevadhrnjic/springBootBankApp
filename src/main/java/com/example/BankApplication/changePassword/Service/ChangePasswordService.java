@@ -21,6 +21,7 @@ public class ChangePasswordService {
 
     @Autowired
     TokenUtil tokenUtil;
+
     @Autowired
     UserRepository userRepository;
 
@@ -30,7 +31,7 @@ public class ChangePasswordService {
     @Autowired
     EmailVerificationRepository emailVerificationRepository;
 
-    public void changePassword(String token) throws Exception {
+    public void changePassword(String token) {
 
         Long userId = tokenUtil.verifyJwt(token);
         User user = userRepository.getUserById(userId);

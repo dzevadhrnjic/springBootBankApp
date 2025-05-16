@@ -23,7 +23,7 @@ public class LoginService {
 
         AccessToken accessToken = new AccessToken();
 
-        User loginUser = userRepository.getUser(userLogin.getEmail(),
+        User loginUser = userRepository.getUserByEmailAndPassword(userLogin.getEmail(),
                 hashUtils.generateHash(userLogin.getPassword()));
 
         if (loginUser == null) {

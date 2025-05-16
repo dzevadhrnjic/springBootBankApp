@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-
 public interface StatementRepository extends JpaRepository<StatementPdf, Long> {
 
     @Query(value = "select dbtransaction.amount, dbtransaction.id, dbuser.firstname || ' ' || dbuser.lastname AS sendername," +

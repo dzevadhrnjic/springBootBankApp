@@ -3,7 +3,6 @@ package com.example.BankApplication.user.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
@@ -41,8 +40,6 @@ public class EmailService  {
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
-        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-
         mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
         mimeMessage.setFrom(new InternetAddress("from@gmail.com"));
         mimeMessage.setSubject(subject);
@@ -58,7 +55,6 @@ public class EmailService  {
         javaMailSender.send(mimeMessage);
 
         System.out.println("Mail with attachment sent successfully");
-
     }
 
     public String getRandomNumbers(){

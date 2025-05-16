@@ -13,11 +13,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-
 import org.springframework.data.domain.Pageable;
+import org.webjars.NotFoundException;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,7 +34,8 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
-    public List<User> listUsers(Integer pageNumber, Integer pageSize, String firstname, String lastname, String address, String email) {
+    public List<User> listUsers(Integer pageNumber, Integer pageSize, String firstname,
+                                String lastname, String address, String email) {
 
         Pageable paging = PageRequest.of(pageNumber, pageSize);
 
@@ -58,7 +57,13 @@ public class UserService {
             specification = specification.and(UserSpecification.hasEmail(email));
         }
 
-        return userRepository.findAll(specification, paging);
+        List users = userRepository.findAll(specification, paging);
+
+        if (users.isEmpty()) {
+            throw new NotFoundException("No users");
+        }
+
+        return users;
     }
 
     public User getUserById(Long userId) {
@@ -72,7 +77,7 @@ public class UserService {
         return user;
     }
 
-    public User createUser(User user) throws MessagingException, IOException {
+    public User addUser(User user) {
 
         UserValidationService.userFieldsValidation(user);
 

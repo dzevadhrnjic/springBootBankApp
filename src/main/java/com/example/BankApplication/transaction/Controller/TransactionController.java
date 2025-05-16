@@ -28,7 +28,7 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @GetMapping(path = "all")
+    @GetMapping(path = "allTransactions")
     public ResponseEntity<Object> listAllTransaction(@RequestParam(name = "pageNumber") int pageNumber,
                                                      @RequestParam(name = "pageSize") int pageSize,
                                                      @RequestParam(name = "order", required = false) String order,

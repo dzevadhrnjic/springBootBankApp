@@ -28,6 +28,7 @@ public class HashUtils {
         }
         return new String(hexChars);
     }
+
     public static byte[] createSalt() {
         byte[] bytes = new byte[20];
         SecureRandom random = new SecureRandom();
